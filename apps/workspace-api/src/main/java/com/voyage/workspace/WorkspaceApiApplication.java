@@ -1,4 +1,4 @@
-package com.voyage.workspace_api;
+package com.voyage.workspace;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
