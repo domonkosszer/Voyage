@@ -4,6 +4,8 @@ import com.voyage.workspace.products.SkuRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
@@ -33,5 +35,13 @@ public class InventoryController {
     @GetMapping("/stock/{skuId}")
     public int getCurrentStock(@PathVariable Long skuId) {
         return movementRepo.currentStock(skuId);
+    }
+
+    @GetMapping("/overview")
+    public List<InventoryOverviewRow> overview(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Boolean active
+    ) {
+        return skuRepo.inventoryOverview(category, active);
     }
 }
