@@ -1,0 +1,200 @@
+VOYAGE – Nächste Projektschritte (Workspace + Login + Webblog) – UPDATE 2026-01-20
+===============================================================================
+
+Ziel
+----
+Ein internes Workspace-System mit Login + Webinterface
+und ein separates öffentliches Webblog für Content & Brand.
+
+
+Aktueller Stand
+---------------
+Bereits implementiert:
+- Products
+- SKUs (Varianten)
+- InventoryMovements (Bestandsbuchungen)
+- Current Stock pro SKU
+- Inventory Overview Endpoint (aggregierte Bestandsübersicht)
+- Login-System (Spring Security, Form Login, Session)
+  - /api/** ist geschützt (nur eingeloggt)
+  - Login per Browser (/login) und per curl (Cookie/JSESSIONID) funktioniert
+
+Damit ist das Domain-Fundament + Zugriffsschutz + UI-taugliche API abgeschlossen.
+
+
+Wichtiger Hinweis zur Datenbank (AKTUELLER ZUSTAND)
+---------------------------------------------------
+Die Anwendung verwendet derzeit eine H2 In-Memory Datenbank:
+
+- JDBC URL: jdbc:h2:mem:...
+- Die Datenbank liegt ausschließlich im RAM
+- BEI JEDEM APP-RESTART WERDEN ALLE DATEN GELÖSCHT
+
+Dieser Zustand ist bewusst gewählt und sinnvoll für:
+- frühe Entwicklung
+- schnelles Testen
+- Debugging
+- Fokus auf Domain-Logik statt Persistenz
+
+Wichtig:
+- Products, SKUs und InventoryMovements müssen nach jedem Neustart neu angelegt werden
+- IDs (productId, skuId) ändern sich nach jedem Restart
+
+Geplanter späterer Schritt:
+- Umstellung auf persistente DB (z. B. H2 file, Postgres)
+- Einführung von Migrations (Flyway)
+
+
+Grundprinzip
+------------
+Workspace (intern) und Public Website (Blog) sind zwei verschiedene Welten
+und sollten technisch getrennt sein.
+
+- Workspace = interne Realität (Inventory, Orders, Drops)
+- Public Web = Content, Blog, Brand (keine sensiblen Daten)
+
+
+Empfohlene Architektur
+----------------------
+
+1) workspace-api (Spring Boot)
+   - Products / SKUs / Inventory (besteht)
+   - Aggregierte Inventory-Übersicht (besteht)
+   - Auth (besteht)
+   - später Orders / Drops
+
+2) workspace-ui (Webinterface)
+   - internes Dashboard
+   - spricht mit workspace-api
+   - nutzt Session-Cookies (Browser)
+
+3) public-web (Blog / Brand)
+   - öffentlich zugänglich
+   - kein Login nötig
+   - getrennt vom Workspace
+
+
+Repo-Struktur
+-------------
+voyage/
+├─ apps/
+│  ├─ workspace-api/   (Backend)
+│  ├─ workspace-ui/    (internes UI)
+│  └─ public-web/      (Blog / Brand)
+└─ packages/
+   └─ shared/          (optional: DTOs / Types)
+
+
+Empfohlene Reihenfolge (sehr wichtig)
+-------------------------------------
+
+SCHRITT 1: Login-System für Workspace
+------------------------------------
+Status: ERLEDIGT ✅
+
+Ziel:
+- Zugriff auf /api/** nur für eingeloggte Nutzer
+- Workspace nicht öffentlich zugänglich
+
+Implementiert:
+- Spring Security
+- Form Login
+- Session-basiert (kein JWT)
+
+Offene Endpoints:
+- /health (öffentlich)
+- /h2-console (nur Development)
+
+
+SCHRITT 2: Workspace-taugliche Endpoints
+----------------------------------------
+Status: ERLEDIGT ✅
+
+Implementiert:
+- GET /api/inventory/overview
+
+Liefert pro SKU:
+- Produktname
+- Kategorie
+- Größe / Farbe
+- Preis
+- Aktueller Bestand (SUM der InventoryMovements)
+
+Bedeutung:
+- Ein einzelner Request ist ausreichend für das gesamte Inventory-Dashboard
+- Backend liefert UI-fertige Daten (keine Aggregation im Frontend nötig)
+
+Grundlage für:
+- Inventory Tabelle
+- Low-Stock Checks
+- Drop-Planung
+- Workspace UI
+
+
+SCHRITT 3: Workspace UI (minimal starten)
+-----------------------------------------
+Status: ALS NÄCHSTES ✅
+
+Nicht zu groß denken. Start mit EINER Seite:
+
+- Inventory Übersicht
+- Tabelle mit allen SKUs + currentStock
+- Suche & Filter (Name, SKU, Kategorie)
+- Button für Inventory Movements (+ / -)
+
+Ergebnis:
+Ein echtes internes Tool, das täglich nutzbar ist.
+
+
+SCHRITT 4: Public Webblog (parallel, aber getrennt)
+---------------------------------------------------
+Status: PARALLEL MÖGLICH ✅
+
+Empfohlener Start:
+- Eigenes Frontend (public-web)
+- Content als Markdown-Dateien im Repo
+- Git als CMS
+
+Vorteile:
+- Kein Admin-UI nötig
+- Keine Auth
+- Sehr schneller Content-Workflow
+
+
+Warum diese Reihenfolge sinnvoll ist
+------------------------------------
+- Workspace erzeugt operativen Wert
+- Login schützt eure Arbeit
+- Inventory Overview macht das System direkt benutzbar
+- UI kann ohne weitere Backend-Arbeit gebaut werden
+- Blog kann unabhängig wachsen
+- Keine unnötige Komplexität zu früh
+
+
+Langfristige Erweiterungen
+--------------------------
+- Orders → automatische InventoryMovements
+- Drops → Production → initialer Bestand
+- Automations (Low-Stock Alerts)
+- Rollen (Admin / Viewer)
+- Persistente Datenbank + Migrations
+- Public Shop (optional)
+
+
+Merksätze
+---------
+- Workspace zuerst, Public später
+- Login früh einbauen (erledigt)
+- Inventory niemals direkt ändern
+- SKUs sind die operative Wahrheit
+- In-Memory DB = flüchtig, aber perfekt für den Start
+
+
+Nächster konkreter Schritt
+--------------------------
+Start von:
+- workspace-ui (Inventory Tabelle auf Basis von /api/inventory/overview)
+
+Danach:
+- Orders + automatische Inventory-Abbuchung
+- Umstellung auf persistente DB, sobald Stabilität erreicht ist

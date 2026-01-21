@@ -1,0 +1,109 @@
+VOYAGE – SKUs & InventoryMovements
+=================================
+
+1. Product vs. SKU
+------------------
+
+Ein Product beschreibt das Modell / die Idee.
+Beispiel:
+- "Voyage Tee"
+
+Eine SKU (Stock Keeping Unit) ist die kleinste verkaufbare Einheit.
+Sie beschreibt eine konkrete Variante eines Produkts.
+
+Beispiel-SKUs für "Voyage Tee":
+- VOY-TEE-BLK-M  (Schwarz, Größe M)
+- VOY-TEE-BLK-L  (Schwarz, Größe L)
+- VOY-TEE-WHT-M  (Weiß, Größe M)
+
+Wichtige Regel:
+- Produkte werden NICHT gelagert oder verkauft
+- NUR SKUs werden gelagert, verkauft und gezählt
+
+
+2. Warum SKUs notwendig sind
+----------------------------
+
+- Bestand unterscheidet sich pro Größe/Farbe
+- Preis kann pro Variante unterschiedlich sein
+- Orders referenzieren SKUs
+- Inventory bezieht sich IMMER auf SKUs
+
+Kurz:
+Alles Operative hängt an der SKU, nicht am Product.
+
+
+3. InventoryMovement – Grundidee
+--------------------------------
+
+InventoryMovement speichert JEDE Veränderung am Bestand.
+
+Es gibt KEIN Feld wie:
+- stock = 49
+
+Stattdessen gibt es Buchungen (Movements):
+- +50  PRODUCTION
+- -1   SALE
+- +1   RETURN
+- -3   ADJUSTMENT
+
+
+4. Inventory als Buchhaltung
+----------------------------
+
+Inventory funktioniert wie ein Konto:
+
+- Jede Bewegung ist eine Buchung
+- Der aktuelle Bestand ist die Summe aller Buchungen
+
+Beispiel für eine SKU:
+
++50  (PRODUCTION)
+-1   (SALE)
++1   (RETURN)
+
+Current Stock = 50
+
+
+5. Vorteile dieses Modells
+--------------------------
+
+- Vollständige Historie
+- Jeder Bestand ist erklärbar
+- Fehler lassen sich nachvollziehen
+- Perfekt für:
+  - Drops
+  - Reporting
+  - Automationen
+  - Forecasting
+
+
+6. Beziehung zwischen Product, SKU und Inventory
+------------------------------------------------
+
+Product
+ └─ SKU
+    └─ InventoryMovements
+       ├─ +50 (PRODUCTION)
+       ├─ -1  (SALE)
+       └─ -3  (ADJUSTMENT)
+
+
+7. Goldene Regeln
+-----------------
+
+1. Bestand niemals direkt speichern
+2. Inventory immer über Movements ändern
+3. Orders erzeugen InventoryMovements
+4. Drops erzeugen initiale Production-Movements
+
+
+8. Was darauf aufbaut
+---------------------
+
+- Inventory Overview (Stock pro SKU)
+- Order-Fulfillment (automatische Abbuchung)
+- Drop-Planung (geplant vs. real)
+- Low-Stock Alerts
+
+Dieses Modell ist bewusst einfach, aber skalierbar.
