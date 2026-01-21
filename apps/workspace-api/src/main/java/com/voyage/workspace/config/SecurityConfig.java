@@ -2,15 +2,9 @@ package com.voyage.workspace.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -19,54 +13,47 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                // Autorisierung
-                .authorizeHttpRequests(auth -> auth
-                        // offen
-                        .requestMatchers("/health", "/error").permitAll()
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/health", "/error").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
 
-                        // H2-Console nur DEV (siehe extra Bean unten), hier erstmal erlaubt,
-                        // wird durch Profile gesteuert
-                        .requestMatchers("/h2-console/**").permitAll()
+                // Admin-only user management
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // alles unter /api nur eingeloggt
-                        .requestMatchers("/api/**").authenticated()
+                // Everything else under /api requires login
+                .requestMatchers("/api/**").authenticated()
 
-                        // sonst auch nur eingeloggt (Workspace nicht public)
-                        .anyRequest().authenticated()
-                )
+                // Workspace should not be public
+                .anyRequest().authenticated()
+        );
 
-                // Form Login (Session)
-                .formLogin(Customizer.withDefaults())
+        http.formLogin(form -> form
+                .defaultSuccessUrl("http://localhost:3000/", true)
+        );
 
-                // Logout ok
-                .logout(Customizer.withDefaults());
+        http.logout(logout -> logout
+                .logoutUrl("/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("http://localhost:3000/login")
+                .permitAll()
+        );
 
-        // Damit H2 Console im Browser funktioniert:
         http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-        // CSRF: Für H2 Console + einfache curl Tests disable (für internes Tool OK zum Start).
-        // Später kann man das feiner machen (nur für /api/** tokenbasiert etc.)
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/login", "/api/**"));
+        // Dev/testing convenience: allow curl + UI without CSRF tokens
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(
+                "/h2-console/**",
+                "/login",
+                "/logout",
+                "/api/**"
+        ));
+
         return http.build();
     }
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    /**
-     * DEV-User: später ersetzt ihr das durch DB-User / Admin Tabelle.
-     */
-    @Bean
-    @Profile("dev")
-    UserDetailsService devUsers(PasswordEncoder encoder) {
-        UserDetails admin = User.withUsername("admin")
-                .password(encoder.encode("admin123!"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin);
     }
 }
