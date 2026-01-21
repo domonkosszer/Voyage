@@ -1,258 +1,216 @@
-VOYAGE – Nächste Projektschritte (Workspace + Login + Webblog) – UPDATE 2026-01-21
-===============================================================================
+VOYAGE – Workspace Backend Dokumentation
+UPDATE 2026-01-21
+=======================================
 
-Ziel
+ZIEL
 ----
 Ein internes Workspace-System mit Login + Webinterface
 und ein separates öffentliches Webblog für Content & Brand.
 
 
-Aktueller Stand
+AKTUELLER STAND
 ---------------
 Bereits implementiert:
+
+DOMAIN
 - Products
 - SKUs (Varianten)
 - InventoryMovements (Bestandsbuchungen)
 - Current Stock pro SKU (Aggregation)
 - Inventory Overview Endpoint (GET /api/inventory/overview)
-- Workspace UI (Next.js, minimal)
-- Login-System (Spring Security, Form Login, Session)
-  - /api/** ist geschützt (nur eingeloggt)
-  - Login per Browser (/login) und per curl (Cookie/JSESSIONID) funktioniert
-  - Logout invalidiert Session + löscht JSESSIONID
+
+WORKSPACE UI (Next.js, minimal)
+- Inventory Übersicht
+- Tabelle mit allen SKUs + currentStock
+- Suche & Filter (Name, SKU, Kategorie)
+- Inventory Movements (+ / -)
+  - PRODUCTION = positives Delta
+  - SALE = negatives Delta
+
+SECURITY / LOGIN
+- Spring Security
+- Form Login (Session-basiert, kein JWT)
+- /api/** ist geschützt
+- Login per Browser (/login)
+- Login per curl (Cookie/JSESSIONID)
+- Logout invalidiert Session + löscht Cookie + Redirect ins UI
 
 Damit ist das Domain-Fundament + Zugriffsschutz + UI-taugliche API abgeschlossen.
 
 
-Wichtiger Hinweis zur Datenbank (AKTUELLER ZUSTAND)
----------------------------------------------------
-Die Anwendung verwendet NICHT MEHR eine In-Memory Datenbank.
+DATENBANK (AKTUELL)
+-------------------
+Die Anwendung verwendet KEINE In-Memory DB mehr.
 
 Aktueller Stand:
 - H2 File-basierte Datenbank (persistent)
-- JDBC URL: jdbc:h2:file:./data/voyage-db;AUTO_SERVER=TRUE
+- JDBC URL:
+  jdbc:h2:file:./data/voyage-db;AUTO_SERVER=TRUE
+
+Eigenschaften:
 - Daten liegen auf der Festplatte (data/voyage-db.mv.db)
 - KEIN Datenverlust bei App-Restart
-
-Wichtig:
-- Die DB überlebt Neustarts
-- IDs (productId, skuId, userId) bleiben stabil
+- IDs bleiben stabil
 - AUTO_SERVER erlaubt parallelen Zugriff (App + H2 Console)
 
-SEHR WICHTIG:
-- Das H2 Passwort wird beim ERSTEN Start festgelegt
-- Danach MUSS es gleich bleiben
-- Falsches Passwort → App startet NICHT (Error 28000)
+WICHTIG – H2 PASSWORT
+--------------------
+- Das H2 Passwort wird beim ERSTEN Start der File-DB festgelegt (falls gesetzt).
+- Danach MUSS es identisch bleiben.
+- Falsches Passwort → App startet NICHT (SQLState 28000).
 
-Empfohlene Config:
-- Username: sa
-- Password: leer (oder exakt das beim ersten Start gesetzte)
+Empfohlene Dev-Konfiguration:
+- spring.datasource.username=sa
+- spring.datasource.password= (leer)
 
-H2 Console:
-- URL: http://localhost:8080/h2-console
+H2 CONSOLE
+----------
+URL:
+- http://localhost:8080/h2-console
+
+Login:
 - JDBC URL: jdbc:h2:file:./data/voyage-db;AUTO_SERVER=TRUE
 - User: sa
-- Password: (leer oder wie initial gesetzt)
+- Password: leer (oder exakt das initial gesetzte)
 
-H2 Login ≠ Workspace Login (komplett getrennt)
+WICHTIG:
+- H2 Login ≠ Workspace Login
+- H2 Login = DB Zugriff
+- Workspace Login = App Zugriff
 
 
-Grundprinzip
+GRUNDPRINZIP
 ------------
-Workspace (intern) und Public Website (Blog) sind zwei verschiedene Welten
-und sollten technisch getrennt sein.
+Workspace (intern) und Public Website (Blog) sind strikt getrennt.
 
-- Workspace = interne Realität (Inventory, Orders, Drops)
-- Public Web = Content, Blog, Brand (keine sensiblen Daten)
+- Workspace = interne Realität
+  (Inventory, Orders, Drops, Users)
+- Public Web = Content, Blog, Brand
+  (keine sensiblen Daten)
 
 
-Empfohlene Architektur
-----------------------
-
+ARCHITEKTUR
+-----------
 1) workspace-api (Spring Boot)
    - Products / SKUs / Inventory
    - Inventory Overview (aggregiert)
    - Auth & Rollen
    - persistente DB
-   - später Orders / Drops
+   - Orders / Drops
 
-2) workspace-ui (Webinterface)
-   - internes Dashboard (Next.js)
-   - spricht mit workspace-api
-   - nutzt Session-Cookies (Browser)
+2) workspace-ui (Next.js)
+   - internes Dashboard
+   - Session-Cookies
+   - keine öffentliche Erreichbarkeit
 
-3) public-web (Blog / Brand)
-   - öffentlich zugänglich
-   - kein Login nötig
-   - getrennt vom Workspace
+3) public-web
+   - öffentlich
+   - kein Login
+   - Blog / Brand
 
 
-Repo-Struktur
--------------
+REPO-STRUKTUR (ZIEL)
+-------------------
 voyage/
-├─ apps/
-│  ├─ workspace-api/   (Backend)
-│  ├─ workspace-ui/    (internes UI)
-│  └─ public-web/      (Blog / Brand)
-└─ packages/
-   └─ shared/          (optional: DTOs / Types)
+├── apps/
+│   ├── workspace-api/
+│   ├── workspace-ui/
+│   └── public-web/
+├── packages/
+│   ├── db/        (Schema & Migrations)
+│   └── shared/   (DTOs / Enums)
+└── docs/
+    ├── workspace.txt
+    ├── inventory.txt
+    ├── orders.txt
+    └── drops.txt
 
 
-Empfohlene Reihenfolge (sehr wichtig)
--------------------------------------
-
-SCHRITT 1: Login-System für Workspace
-------------------------------------
-Status: ERLEDIGT ✅
-
-Ziel:
-- Zugriff auf /api/** nur für eingeloggte Nutzer
-- Workspace nicht öffentlich zugänglich
-
-Implementiert:
-- Spring Security
-- Form Login
-- Session-basiert (kein JWT)
-- Logout mit Session-Invalidierung
-- Redirect zurück ins Workspace UI
-
+LOGIN & USER
+------------
 User-Modell:
-- UserAccount in DB
-- Rollen: ADMIN / WORKER
-- active Flag (true / false)
+- UserAccount (DB)
+- role: ADMIN | WORKER
+- active: true | false
 
-Inactive User:
-- kann sich NICHT einloggen
-- bleibt für Historie erhalten
+ACTIVE = false:
+- Login gesperrt
+- Historie bleibt erhalten
 
+USER ROLLEN
+-----------
+ADMIN:
+- User anlegen / deaktivieren
+- Inventory verwalten
+- Orders verwalten
 
-SCHRITT 2: Workspace-taugliche Endpoints
-----------------------------------------
-Status: ERLEDIGT ✅
-
-Implementiert:
-- GET /api/inventory/overview
-
-Liefert pro SKU:
-- Produktname
-- Kategorie
-- Größe / Farbe
-- Preis
-- Aktueller Bestand (SUM der InventoryMovements)
-
-Bedeutung:
-- Ein Request = komplette Inventory Tabelle
-- Keine Aggregation im Frontend nötig
-- Grundlage für UI, Low-Stock, Drops
+WORKER:
+- Inventory sehen
+- Inventory Movements buchen
 
 
-SCHRITT 3: Workspace UI (minimal starten)
------------------------------------------
-Status: ERLEDIGT (MINIMAL) ✅
-
-Implementiert:
-- Inventory Übersicht
-- Tabelle mit allen SKUs + currentStock
-- Suche & Filter (Name, SKU, Kategorie)
-- Inventory Movements (+ / -)
-- SALE erzeugt negatives Delta
-- PRODUCTION positives Delta
-
-Ergebnis:
-Ein echtes internes Tool, sofort nutzbar.
-
-
-SCHRITT 4: Active / Inactive statt Löschen
-------------------------------------------
-Status: IMPLEMENTIERT / EMPFOHLEN ✅
-
-Grundregel:
+ACTIVE / INACTIVE STATT LÖSCHEN
+-------------------------------
+GRUNDREGEL:
 - NIEMALS löschen, wenn Historie existiert
 
 Umsetzung:
-- Products und SKUs haben active Flag
-- active = false:
-  - wird im Workspace ausgeblendet
-  - bleibt in DB für Historie
+- Products haben active Flag
+- SKUs haben active Flag
+
+active = false:
+- im Workspace ausgeblendet
+- bleibt in DB für Historie
 
 Beispiel:
 - Caps werden nicht mehr verkauft
-- Product/SKUs auf inactive setzen
-- Inventory bleibt korrekt nachvollziehbar
+- Product + SKUs inactive setzen
+- Inventory-Historie bleibt korrekt
 
 
-SCHRITT 5: Worker-User
----------------------
-Status: IMPLEMENTIERT (Basis) ✅
-
-User-Typen:
-- ADMIN: volle Rechte, Userverwaltung
-- WORKER: Inventory sehen & buchen
-
-Worker anlegen:
-- per Admin Endpoint oder DB
-- Passwort wird BCrypt-gehasht
-- active = true notwendig
-
-Worker deaktivieren:
-- active = false
-- Login gesperrt
-- Daten bleiben erhalten
-
-
-SCHRITT 6: Public Webblog (parallel, aber getrennt)
----------------------------------------------------
-Status: PARALLEL MÖGLICH ✅
-
-Empfohlener Start:
-- Eigenes Frontend (public-web)
-- Content als Markdown im Repo
-- Git als CMS
-
-Vorteile:
-- Kein Admin-UI nötig
-- Keine Auth
-- Sehr schneller Workflow
-
-
-Warum diese Reihenfolge sinnvoll ist
-------------------------------------
-- Workspace erzeugt operativen Wert
-- Login schützt eure Arbeit
-- Inventory Overview macht das System sofort nutzbar
-- UI basiert auf stabiler API
-- Blog kann unabhängig wachsen
-
-
-Langfristige Erweiterungen
---------------------------
-- Orders → automatische SALE Movements
-- Drops → Production → initialer Bestand
-- Low-Stock Alerts
-- Rollenfeingranularität
-- Flyway Migrations
-- Postgres als DB
-- Public Shop (optional)
-
-
-Merksätze
+INVENTORY
 ---------
-- Workspace zuerst, Public später
-- Login früh einbauen (erledigt)
-- Inventory niemals direkt ändern
-- SKUs sind die operative Wahrheit
-- Löschen ist fast immer falsch → inactive ist richtig
-- H2 Passwort niemals ändern ohne DB Reset
+Inventory wird NIE direkt geändert.
+
+Regel:
+- Bestand = SUM aller InventoryMovements
+
+MovementReason:
+- PRODUCTION  (+)
+- SALE        (-)
+- CORRECTION  (+ / -)
+
+Vorteil:
+- Vollständige Historie
+- Audit-fähig
+- Fehler rückgängig machbar
 
 
-Nächster konkreter Schritt
---------------------------
-- Admin UI für User + Active/Inactive
-- Deactivate-Flow für Products & SKUs
-- Orders mit automatischen InventoryMovements
+ORDERS (BACKEND)
+----------------
+Order Flow:
+1) Stock-Check pro SKU
+2) Order + OrderItems speichern
+3) SALE InventoryMovements erzeugen (negatives Delta)
+4) Alles in einer Transaction
 
-Curls
------------------
+WICHTIG:
+- Kein negativer Bestand erlaubt
+- Inaktive SKUs dürfen nicht verkauft werden
+
+TECHNISCHER HINWEIS:
+- Entities dürfen nicht direkt als JSON zurückgegeben werden
+- DTOs oder @JsonIgnore nutzen
+- Sonst: Endlos-JSON (Order <-> Items)
+
+
+CURL – ADMIN USER ANLEGEN
+------------------------
+Voraussetzung:
+- Als ADMIN eingeloggt
+- cookies.txt enthält Session
+
+ADMIN:
 curl -X POST http://localhost:8080/api/admin/users \
   -H "Content-Type: application/json" \
   -b cookies.txt \
@@ -263,12 +221,49 @@ curl -X POST http://localhost:8080/api/admin/users \
     "active": true
   }'
 
-  curl -X POST http://localhost:8080/api/admin/users \
-    -H "Content-Type: application/json" \
-    -b cookies.txt \
-    -d '{
-      "username": "worker1",
-      "password": "worker123!",
-      "role": "WORKER",
-      "active": true
-    }'
+WORKER:
+curl -X POST http://localhost:8080/api/admin/users \
+  -H "Content-Type: application/json" \
+  -b cookies.txt \
+  -d '{
+    "username": "worker1",
+    "password": "worker123!",
+    "role": "WORKER",
+    "active": true
+  }'
+
+
+NÄCHSTE SCHRITTE
+----------------
+1) docs/
+   - orders.txt finalisieren (Flows + Beispiele)
+   - drops.txt vorbereiten
+
+2) packages/shared/
+   - Enums (Role, Category, MovementReason)
+   - DTOs statt Entities
+
+3) packages/db/
+   - Flyway vorbereiten
+   - Migrationen versionieren
+
+4) workspace-api/
+   - Orders finalisieren
+   - Cancel / Refund Flow (Reverse Movements)
+   - Active/Inactive Endpoints
+   - Admin User Listing
+
+5) workspace-ui/
+   - Admin Page (User Management)
+   - Active/Inactive Toggle
+   - bessere UX für Movements
+
+
+MERKSÄTZE
+---------
+- Workspace zuerst, Public später
+- Inventory niemals direkt ändern
+- SKUs sind die operative Wahrheit
+- Löschen ist fast immer falsch
+- inactive ist richtig
+- H2 Passwort niemals ändern ohne DB Reset

@@ -20,8 +20,9 @@ public class InventoryMovement {
     @Column(nullable = false)
     private int delta;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String reason; // PRODUCTION, SALE, RETURN, ADJUSTMENT
+    private MovementReason reason;
 
     private String reference;
 
@@ -33,12 +34,12 @@ public class InventoryMovement {
     public Long getId() { return id; }
     public Sku getSku() { return sku; }
     public int getDelta() { return delta; }
-    public String getReason() { return reason; }
+    public MovementReason getReason() { return reason; }
     public String getReference() { return reference; }
     public Instant getCreatedAt() { return createdAt; }
 
     public void setSku(Sku sku) { this.sku = sku; }
     public void setDelta(int delta) { this.delta = delta; }
-    public void setReason(String reason) { this.reason = reason; }
+    public void setReason(MovementReason reason) { this.reason = reason; }
     public void setReference(String reference) { this.reference = reference; }
 }
