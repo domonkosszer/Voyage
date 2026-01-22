@@ -3,13 +3,26 @@ import { TopBar, InfoLink } from "../../components/shell/TopBar";
 
 export default function HomePage(){
     return(
-        <div>
-            <TopBar title="VOYAGE" right={<InfoLink href="/about" />} />
+        <>
+            {/* NAVIGATION ONLY */}
+            <TopBar right={<InfoLink href="/about"/>} title={""} />
 
-            <main className="mx-auto max-w-3xl px-4 py-10">
-                <h1 className="text-2xl font-semibold">Public Web</h1>
-                <p className="mt-3 opacity-80">
-                    Das ist das Grundgeruest. Von hier aus baust du Design & Content iterativ.
+            {/* BRAND / LOGO */}
+            <section className="mt-20 text-center">
+                <h1 className="font-bold text-[11rem] tracking-[0.6em] leading-none">
+                    VOYAGE
+                </h1>
+            </section>
+
+            {/* PAGE CONTENT */}
+            <main className="mx-auto min-w-6xl px-7 py-160 text-center">
+
+                <h2 className="font-serif text-[10.5rem] tracking-[0.2em] opacity-5">
+                    BE THE PENGUIN
+                </h2>
+
+                <p className="mt-3 opacity-60">
+                    be the penguine
                 </p>
 
                 <div className="mt-6">
@@ -18,6 +31,6 @@ export default function HomePage(){
                     </Link>
                 </div>
             </main>
-        </div>
+        </>
     )
 }
