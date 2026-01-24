@@ -6,6 +6,7 @@ export type PostMeta = {
     title: string;
     date: string;
     excerpt?: string;
+    image?: string;
 };
 
 export type Post = {
@@ -39,7 +40,8 @@ export function getAllPosts(): Post[] {
         const meta: PostMeta = {
             title: String(data.title ?? slug),
             date: String(data.date ?? "1970-01-01"),
-            excerpt: data.excerpt ? String(data.excerpt) : undefined
+            excerpt: data.excerpt ? String(data.excerpt) : undefined,
+            image: data.image ? String(data.image) : undefined
         };
 
         return { slug, meta, content };
