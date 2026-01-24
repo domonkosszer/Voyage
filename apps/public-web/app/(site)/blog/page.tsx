@@ -19,55 +19,67 @@ export default function BlogIndexPage() {
                     <div
                         className="flex whitespace-nowrap"
                         style={{
-                            animation: "marquee 25s linear infinite",
+                            animation: "marquee 45s linear infinite",
                         }}
                     >
-                        <h1 className="text-[130px] font-semibold tracking-widest leading-tight mr-20">
+                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG
                         </h1>
-                        <h1 className="text-[130px] font-semibold tracking-widest leading-tight mr-20">
-                            BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG
+                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
+                            BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG · BLOG · BLOG · BLOG
                         </h1>
                     </div>
 
                     <div
-                        className="flex whitespace-nowrap mt-[-70px]"
-                        style={{
-                            animation: "marquee 40s linear infinite",
-                        }}
+                        className="flex whitespace-nowrap mt-[-30px]"
+                        /*style={{
+                            animation: "marquee 50s linear infinite",
+                        }}*/
                     >
                         <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
-                            Thoughts, experiments and notes from the Voyage universe. ·
+                            Thoughts, experiments and notes from the Voyage universe.
                         </p>
                         <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
-                            Thoughts, experiments and notes from the Voyage universe. ·
+                            Thoughts, experiments and notes from the Voyage universe.
                         </p>
                     </div>
                 </div>
             </section>
 
-            <main className="mt-12">
-                <div className="grid grid-cols-3 gap-16 mt-[30]">
+            {/*blog section*/}
+
+            <main className="mt-[10px] px-[30px] md:px-[10px]">
+                <div className="grid grid-cols-3 gap-x-[30px] gap-y-[90px] mt-[50]">
                     {posts.map((p) => (
                         <article
                             key={p.slug}
-                            className="rounded-2xl bg-neutral-50 p-10"
+                            className="rounded-2xl bg-neutral-50 overflow-hidden"
                         >
-                            <div className="text-xs opacity-60">
-                                {p.meta.date}
+                            <div className="aspect-square w-full bg-neutral-200">
+                                <img
+                                    src={p.meta.image ?? "/blog/placeholder.jpg"}
+                                    alt={p.meta.title}
+                                    className="h-full w-full object-cover"
+                                />
                             </div>
 
-                            <h2 className="mt-[20px] text-3xl font-semibold leading-tight">
-                                <Link href={`/blog/${p.slug}`}>
-                                    {p.meta.title}
-                                </Link>
-                            </h2>
+                            <div className="p-10">
+                                <div className="text-xs opacity-60">
+                                    {p.meta.date}
+                                </div>
 
-                            {p.meta.excerpt && (
-                                <p className="mt-4 opacity-50">
-                                    {p.meta.excerpt}
-                                </p>
-                            )}
+                                <h2 className="mt-3 text-[40px] font-semibold leading-tight">
+                                    <Link href={`/blog/${p.slug}`}>
+                                        {p.meta.title}
+                                    </Link>
+                                </h2>
+
+                                {p.meta.excerpt && (
+                                    <p className="mt-4 opacity-50">
+                                        {p.meta.excerpt}
+                                    </p>
+                                )}
+                            </div>
                         </article>
                     ))}
                 </div>
