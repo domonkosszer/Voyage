@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TopBar, InfoLink } from "../../components/shell/TopBar";
+import ImageSphereSketch from "../../components/visuals/ImageSphereSketch";
 
 export default function HomePage(){
     return(
@@ -30,6 +31,7 @@ export default function HomePage(){
                         Go to Blog
                     </Link>
                 </div>
+
             </main>
         </>
     )
