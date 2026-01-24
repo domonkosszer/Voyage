@@ -22,18 +22,18 @@ export default async function BlogPostPage({ params }: PageProps) {
                 right={<InfoLink href="/about" />}
             />
 
-            <main className="mx-auto max-w-3xl px-4 py-10">
-                <div className="text-xs opacity-70">
-                    {post.meta.date}
-                </div>
-
-                <h1 className="mt-2 text-2xl font-semibold">
+            <main className="mx-auto max-w-3xl py-20 space-y-10">
+                <h1 className="text-[94px] font-semibold text-center">
                     {post.meta.title}
                 </h1>
 
-                <div className="mt-8 whitespace-pre-wrap leading-relaxed">
+                <p className="text-[12px] opacity-60 text-center">
+                    {post.meta.date}
+                </p>
+
+                <article className="text-[65px] prose prose-neutral mt-10 text-center mt-[90px]">
                     {post.content}
-                </div>
+                </article>
             </main>
         </div>
     );

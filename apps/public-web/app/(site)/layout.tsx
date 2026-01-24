@@ -1,12 +1,9 @@
-import "../global.css";
 import type { ReactNode } from "react";
 
-export default function SiteLaytout({ children }: {children: ReactNode}) {
+export default function SiteLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="de">
-            <body className="bg-white text-black">
-                {children}
-            </body>
-        </html>
+        <div className="px-6 py-6 md:px-12 md:py-10">
+            {children}
+        </div>
     );
 }
