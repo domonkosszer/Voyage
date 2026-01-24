@@ -9,7 +9,7 @@ export default function HomePage(){
 
             {/* BRAND / LOGO */}
             <section className="mt-20 text-center">
-                <h1 className="font-bold text-[11rem] tracking-[0.6em] leading-none">
+                <h1 className="font-bold text-[10rem] tracking-[0.6em] leading-none">
                     VOYAGE
                 </h1>
             </section>

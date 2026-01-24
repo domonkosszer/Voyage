@@ -1,6 +1,25 @@
 @import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
 
+@keyframes move-horizontal {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+
 /* Minimal default to keep things clean */
 html, body {
     height: 100%;

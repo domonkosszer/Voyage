@@ -26,6 +26,10 @@ yarn-error.log*
 
 # IntelliJ / IDE
 .idea/
+*iml
+checkstyle-idea.xml
 
 # Local data
 data/
+*.mv.db
+*.trace.db
