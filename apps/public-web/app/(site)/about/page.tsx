@@ -1,6 +1,7 @@
 import { TopBar, BackLink } from "../../../components/shell/TopBar";
 
 export default function AboutPage() {
+    // @ts-ignore
     return (
         <div>
             <TopBar title="Info" left={<BackLink href="/" />} />
