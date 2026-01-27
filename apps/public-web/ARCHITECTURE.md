@@ -3,87 +3,127 @@ VOYAGE – Blog Architecture Documentation
 
 Purpose
 -------
-This document explains how the blog system is structured,
-how data flows through the application, and how blog posts
-are rendered. A new developer should be able to understand
-and extend the blog after reading this file.
+This document describes the architecture of the VOYAGE public blog,
+including folder structure, routing, data flow, and rendering logic.
+
+A new developer should be able to understand how blog posts are loaded,
+renderouten funktionieren, and where to extend the system after reading this file.
 
 
 High-Level Overview
 -------------------
-The blog is implemented using the Next.js App Router with
-file-based routing and dynamic segments.
+The blog is implemented using the **Next.js App Router** with:
 
-Key concepts:
-- Blog posts are stored as MDX files
-- Each post is identified by a slug
-- Pages are generated dynamically based on folder structure
-- Shared UI elements are reused across pages
+- File-based routing
+- Dynamic route segments
+- MDX-based content
+- A shared public layout
+
+Key principles:
+- Blog content lives outside the app router (content/posts)
+- Routing is derived from folder structure
+- Rendering happens in async server components
+- Shared UI is colocated in components/
 
 
-Folder Structure
+Monorepo Context
 ----------------
+This repository is a monorepo containing multiple applications.
+
+Relevant app for the blog:
+- apps/public-web → Public website & blog
+
+Other apps (not covered here):
+- workspace-api
+- workspace-ui
+
+
+Folder Structure (Current)
+--------------------------
 
 apps/public-web/
 │
 ├── app/
-│   ├── (site)/
-│   │   ├── layout.tsx          → Shared layout for public pages
-│   │   ├── page.tsx            → Homepage
+│   ├── (site)/                     → Public site route group
+│   │   ├── layout.tsx              → Shared layout (TopBar, globals)
+│   │   ├── page.tsx                → Homepage
 │   │   ├── about/
-│   │   │   └── page.tsx        → Static About page
+│   │   │   └── page.tsx            → Static About page
 │   │   └── blog/
-│   │       ├── page.tsx        → Blog index (list of posts)
+│   │       ├── layout.tsx          → Blog-specific layout (optional)
+│   │       ├── page.tsx            → Blog index (list of posts)
 │   │       └── [slug]/
-│   │           └── page.tsx    → Dynamic blog post page
+│   │           └── page.tsx        → Dynamic blog post page
 │   │
-│   └── globals.css             → Global styles
+│   ├── global.css                  → Global styles
+│   └── layout.tsx                  → Root layout
 │
 ├── components/
 │   └── shell/
-│       └── TopBar.tsx          → Shared navigation shell
+│       └── TopBar.tsx              → Shared navigation bar
+│
+├── visuals/
+│   └── ImageSphereSketch.tsx       → Creative / visual components
 │
 ├── content/
 │   └── posts/
-│       └── YYYY-MM-DD-title.mdx → Blog post content files
+│       ├── YYYY-MM-DD-title.mdx    → Blog post source files
+│       └── ...
 │
 ├── lib/
-│   └── posts.ts                → Blog data loading logic
+│   └── posts.ts                    → Blog data loading & parsing logic
+│
+├── public/
+│   └── blog/
+│       └── visuals/
+│           ├── first.jpg
+│           ├── second.jpg
+│           └── ...
 
 
 Routing Logic
 -------------
-The App Router uses the folder structure to define routes:
+Routing is defined entirely by the folder structure.
 
-- /blog
-  → app/(site)/blog/page.tsx
+Static routes:
+- /                → app/(site)/page.tsx
+- /about           → app/(site)/about/page.tsx
+- /blog            → app/(site)/blog/page.tsx
 
-- /blog/some-post-slug
-  → app/(site)/blog/[slug]/page.tsx
+Dynamic routes:
+- /blog/[slug]     → app/(site)/blog/[slug]/page.tsx
 
-The [slug] directory defines a dynamic route parameter.
+The `[slug]` directory defines a dynamic route parameter
+that is passed to the page component as `params.slug`.
 
 
-Data Flow (How a blog post is rendered)
+Data Flow (How a Blog Post Is Rendered)
 ---------------------------------------
 
-1. User navigates to /blog/[slug]
+1. User navigates to:
+   /blog/some-post-slug
 
-2. Next.js extracts the slug from the URL:
+2. Next.js resolves the route:
+   app/(site)/blog/[slug]/page.tsx
+
+3. The page component receives:
    params.slug
 
-3. The page component calls:
-   getPostBySlug(slug)
+4. The page calls:
+   getPostBySlug(slug) from lib/posts.ts
 
-4. getPostBySlug:
-    - Reads the MDX file from content/posts
+5. lib/posts.ts:
+    - Reads the corresponding MDX file from content/posts
     - Parses frontmatter metadata (title, date, etc.)
     - Returns structured post data
 
-5. The page component renders:
-    - TopBar (shared navigation)
-    - Metadata (date, title)
-    - Post content
+6. The page component renders:
+    - Shared layout (TopBar)
+    - Post metadata
+    - MDX content as React components
+
+7. If the slug does not exist:
+    - notFound() is triggered
 
 
 Core Files Explained
@@ -91,39 +131,56 @@ Core Files Explained
 
 app/(site)/blog/[slug]/page.tsx
 --------------------------------
-- Async server component
-- Receives params as a Promise
-- Loads blog content using lib/posts
-- Handles notFound() if slug does not exist
-- Renders blog UI
+- Async Server Component
+- Receives dynamic params (slug)
+- Loads post data via lib/posts
+- Handles invalid slugs with notFound()
+- Renders full blog post view
+
+app/(site)/blog/page.tsx
+------------------------
+- Blog index page
+- Loads all posts via lib/posts
+- Renders list / preview of posts
 
 lib/posts.ts
 -------------
-- Central data access layer for blog posts
-- Abstracts file system and parsing logic
-- Keeps page components clean and focused
+- Central data access layer for blog content
+- Handles file system access and MDX parsing
+- Keeps routing and rendering logic clean
 
 content/posts/*.mdx
 -------------------
 - Source of truth for blog content
 - File name defines the slug
 - Frontmatter stores metadata
-- Content is rendered as React components
+- Body is rendered as MDX
 
 components/shell/TopBar.tsx
 ---------------------------
-- Shared navigation bar
+- Shared navigation component
 - Used across all public pages
-- Keeps layout consistent
+- Ensures consistent layout and navigation
+
+public/blog/visuals/
+--------------------
+- Static images for blog posts
+- Served directly by Next.js
+- Referenced in MDX or page components
 
 
 Why This Architecture
 ---------------------
 - Clear separation of concerns
-- File-based routing = no manual route config
-- Easy to add new posts (just add an MDX file)
-- Easy to extend with tags, categories, RSS, etc.
-- Scales well as content grows
+- File-based routing (no manual routing config)
+- Content-driven architecture
+- Easy to add new posts
+- Scales well for future features:
+    - Tags
+    - Categories
+    - RSS feeds
+    - Pagination
+    - Search
 
 
 How to Add a New Blog Post
@@ -134,16 +191,19 @@ How to Add a New Blog Post
 2. Use a unique filename:
    YYYY-MM-DD-your-title.mdx
 
-3. Add frontmatter metadata
+3. Add frontmatter metadata (title, date, etc.)
 
-4. The post becomes automatically available
-   at /blog/your-title
+4. Optionally add images to:
+   public/blog/visuals/
+
+5. The post is automatically available at:
+   /blog/your-title
 
 
 Current Status
 --------------
-- Blog routing implemented
-- Dynamic slugs working
-- Shared layout integrated
-- MDX content loading in place
-- Ready for styling and feature extensions
+- App Router fully set up
+- Dynamic blog slugs working
+- Shared public layout integrated
+- MDX content loading stable
+- Ready for styling, animations, and feature extensions
