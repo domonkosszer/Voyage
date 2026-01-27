@@ -7,7 +7,7 @@ This document describes the architecture of the VOYAGE public blog,
 including folder structure, routing, data flow, and rendering logic.
 
 A new developer should be able to understand how blog posts are loaded,
-renderouten funktionieren, and where to extend the system after reading this file.
+render routes work, and where to extend the system after reading this file.
 
 
 High-Level Overview
@@ -49,11 +49,13 @@ apps/public-web/
 │   │   ├── page.tsx                → Homepage
 │   │   ├── about/
 │   │   │   └── page.tsx            → Static About page
-│   │   └── blog/
-│   │       ├── layout.tsx          → Blog-specific layout (optional)
-│   │       ├── page.tsx            → Blog index (list of posts)
-│   │       └── [slug]/
-│   │           └── page.tsx        → Dynamic blog post page
+│   │   ├── blog/
+│   │   │   ├── layout.tsx          → Blog-specific layout (optional)
+│   │   │   ├── page.tsx            → Blog index (list of posts)
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx        → Dynamic blog post page
+│   │   └── admin/
+│   │       └── page.tsx            → Admin-only page (protected)
 │   │
 │   ├── global.css                  → Global styles
 │   └── layout.tsx                  → Root layout
@@ -92,6 +94,9 @@ Static routes:
 
 Dynamic routes:
 - /blog/[slug]     → app/(site)/blog/[slug]/page.tsx
+
+Admin route:
+- /admin           → app/(site)/admin/page.tsx (protected)
 
 The `[slug]` directory defines a dynamic route parameter
 that is passed to the page component as `params.slug`.
@@ -169,35 +174,110 @@ public/blog/visuals/
 - Referenced in MDX or page components
 
 
+Admin Authentication & Security
+--------------------------------
+
+The blog includes an **admin-only section** used for internal tools
+(e.g. editor preview, drafts, future CMS features).
+
+Authentication is **not handled by Next.js**, but delegated to the
+existing Spring Boot backend (`workspace-api`).
+
+Key principles:
+- Public blog remains fully accessible without login
+- Admin routes require a valid backend session
+- Session-based authentication (JSESSIONID)
+- No JWT, no duplicate auth system
+
+
+Admin Route Protection (Frontend)
+---------------------------------
+
+Route:
+- /admin → app/(site)/admin/page.tsx
+
+Protection strategy:
+- Implemented as an **async Server Component guard**
+- On each request:
+    - Calls backend endpoint `/api/me`
+    - Forwards cookies manually
+    - If response is 401 → redirect to /login
+    - If response is 200 → render admin UI
+
+Important detail:
+- Server-side fetch must forward cookies explicitly
+- credentials: "include" is NOT sufficient in Server Components
+
+
+Login Flow (End-to-End)
+----------------------
+
+1. User navigates to:
+   http://localhost:3000/admin
+
+2. Admin page fetches:
+   GET http://localhost:8080/api/me
+
+3. If not authenticated:
+    - Backend returns 401
+    - Next.js redirects to /login (frontend route)
+
+4. Frontend /login page redirects to backend:
+   GET http://localhost:8080/login-redirect?redirect=http://localhost:3000/admin
+
+5. Backend:
+    - Stores redirect target in session
+    - Redirects to /login (without query params)
+
+6. Spring Security default login page is shown
+
+7. User submits credentials
+
+8. On successful login:
+    - Custom successHandler reads redirect from session
+    - User is redirected to:
+      http://localhost:3000/admin
+
+9. Admin page loads successfully
+
+
+Backend Endpoints Involved
+-------------------------
+
+/api/me
+- Returns current authenticated user
+- 200 → logged in
+- 401 → not authenticated
+- Never redirects (API-safe)
+
+/login
+- Spring Security default login page
+- HTML form-based login
+
+/login-redirect
+- Helper endpoint
+- Stores redirect target in session
+- Avoids unsupported query params on /login
+
+
 Why This Architecture
 ---------------------
-- Clear separation of concerns
-- File-based routing (no manual routing config)
-- Content-driven architecture
-- Easy to add new posts
-- Scales well for future features:
-    - Tags
-    - Categories
-    - RSS feeds
-    - Pagination
-    - Search
+- Single source of truth for authentication (Spring)
+- No duplicate auth logic in frontend
+- Clean separation:
+    - Public content → no auth
+    - Admin tools → backend session
+- Works with SSR and Server Components
+- Production-ready pattern for multi-app monorepos
 
 
-How to Add a New Blog Post
--------------------------
-1. Create a new MDX file in:
-   content/posts/
-
-2. Use a unique filename:
-   YYYY-MM-DD-your-title.mdx
-
-3. Add frontmatter metadata (title, date, etc.)
-
-4. Optionally add images to:
-   public/blog/visuals/
-
-5. The post is automatically available at:
-   /blog/your-title
+How to Extend (Future)
+----------------------
+- Admin editor UI
+- Draft / preview mode
+- Role-based admin features
+- CMS integration
+- Protected preview links
 
 
 Current Status
@@ -206,4 +286,5 @@ Current Status
 - Dynamic blog slugs working
 - Shared public layout integrated
 - MDX content loading stable
+- Admin auth flow stable and tested
 - Ready for styling, animations, and feature extensions

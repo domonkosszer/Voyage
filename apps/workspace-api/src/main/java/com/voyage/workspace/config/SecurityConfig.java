@@ -2,10 +2,12 @@ package com.voyage.workspace.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
 public class SecurityConfig {
@@ -14,7 +16,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/health", "/error").permitAll()
+                .requestMatchers("/health", "/error", "/login", "/login-redirect").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
 
                 // Admin-only user management
@@ -27,8 +29,25 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
         );
 
+        // IMPORTANT: For API calls, return 401 instead of redirecting to /login (HTML)
+        http.exceptionHandling(ex -> ex
+                .defaultAuthenticationEntryPointFor(
+                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                        request -> request.getRequestURI() != null && request.getRequestURI().startsWith("/api/")
+                )
+        );
+
         http.formLogin(form -> form
-                .defaultSuccessUrl("http://localhost:3000/", true)
+                .successHandler((request, response, authentication) -> {
+                    String target = request.getParameter("redirect");
+                    if (target == null) {
+                        Object saved = request.getSession().getAttribute("LOGIN_REDIRECT");
+                        if (saved != null) target = saved.toString();
+                    }
+
+                    boolean allowed = target != null && target.startsWith("http://localhost:3000/");
+                    response.sendRedirect(allowed ? target : "http://localhost:3000/admin");
+                })
         );
 
         http.logout(logout -> logout
