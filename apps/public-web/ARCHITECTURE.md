@@ -1,40 +1,48 @@
-VOYAGE – Blog Architecture Documentation
-========================================
+VOYAGE – Blog & Admin Architecture Documentation
+===============================================
 
 Purpose
 -------
-This document describes the architecture of the VOYAGE public blog,
-including folder structure, routing, data flow, and rendering logic.
+This document describes the architecture of the VOYAGE public blog
+and its internal admin system.
 
-A new developer should be able to understand how blog posts are loaded,
-render routes work, and where to extend the system after reading this file.
+It covers folder structure, routing, data flow, authentication,
+and the admin UI shell.
+
+A new developer should be able to understand:
+- how blog posts are loaded and rendered
+- how routing works (public + admin)
+- how authentication is handled
+- where and how to extend the system
 
 
 High-Level Overview
 -------------------
-The blog is implemented using the **Next.js App Router** with:
+The VOYAGE public site is implemented using the **Next.js App Router**
+inside a monorepo, with authentication delegated to a **Spring Boot backend**.
 
-- File-based routing
-- Dynamic route segments
-- MDX-based content
-- A shared public layout
+Key technologies:
+- Next.js (App Router, Server Components)
+- Spring Boot (session-based auth)
+- Tailwind CSS (UI styling)
+- File-based content (TXT / MD / MDX)
 
-Key principles:
-- Blog content lives outside the app router (content/posts)
-- Routing is derived from folder structure
-- Rendering happens in async server components
-- Shared UI is colocated in components/
+Core principles:
+- Public content is always accessible
+- Admin tools are protected via backend session
+- No duplicate authentication logic
+- Clear separation between public site and admin system
 
 
 Monorepo Context
 ----------------
 This repository is a monorepo containing multiple applications.
 
-Relevant app for the blog:
-- apps/public-web → Public website & blog
+Relevant apps:
+- apps/public-web   → Public website, blog, and admin UI
+- apps/workspace-api → Spring Boot backend (auth, API, DB)
 
 Other apps (not covered here):
-- workspace-api
 - workspace-ui
 
 
@@ -45,32 +53,36 @@ apps/public-web/
 │
 ├── app/
 │   ├── (site)/                     → Public site route group
-│   │   ├── layout.tsx              → Shared layout (TopBar, globals)
+│   │   ├── layout.tsx              → Shared public layout (TopBar, globals)
 │   │   ├── page.tsx                → Homepage
 │   │   ├── about/
 │   │   │   └── page.tsx            → Static About page
 │   │   ├── blog/
-│   │   │   ├── layout.tsx          → Blog-specific layout (optional)
+│   │   │   ├── layout.tsx          → Blog-specific layout
 │   │   │   ├── page.tsx            → Blog index (list of posts)
 │   │   │   └── [slug]/
 │   │   │       └── page.tsx        → Dynamic blog post page
 │   │   └── admin/
-│   │       └── page.tsx            → Admin-only page (protected)
+│   │       ├── layout.tsx          → Admin auth guard (server-side)
+│   │       ├── page.tsx            → Admin dashboard (sidebar + header)
+│   │       └── posts/
+│   │           └── page.tsx        → Admin posts manager
 │   │
-│   ├── global.css                  → Global styles
-│   └── layout.tsx                  → Root layout
+│   ├── global.css                  → Tailwind + global styles
+│   └── layout.tsx                  → Root layout (imports global.css)
 │
 ├── components/
 │   └── shell/
-│       └── TopBar.tsx              → Shared navigation bar
+│       └── TopBar.tsx              → Shared public navigation bar
 │
 ├── visuals/
 │   └── ImageSphereSketch.tsx       → Creative / visual components
 │
 ├── content/
 │   └── posts/
-│       ├── YYYY-MM-DD-title.mdx    → Blog post source files
-│       └── ...
+│       ├── YY-MM-DD-title.txt      → Blog post source files (current)
+│       ├── YYYY-MM-DD-title.md     → (optional / supported)
+│       └── YYYY-MM-DD-title.mdx    → (optional / supported)
 │
 ├── lib/
 │   └── posts.ts                    → Blog data loading & parsing logic
@@ -87,125 +99,102 @@ Routing Logic
 -------------
 Routing is defined entirely by the folder structure.
 
-Static routes:
+Public routes:
 - /                → app/(site)/page.tsx
 - /about           → app/(site)/about/page.tsx
 - /blog            → app/(site)/blog/page.tsx
-
-Dynamic routes:
 - /blog/[slug]     → app/(site)/blog/[slug]/page.tsx
 
-Admin route:
-- /admin           → app/(site)/admin/page.tsx (protected)
+Admin routes:
+- /admin           → Admin dashboard (protected)
+- /admin/posts     → Admin post manager (protected)
 
-The `[slug]` directory defines a dynamic route parameter
-that is passed to the page component as `params.slug`.
+Dynamic route parameters:
+- `[slug]` is derived from the filename in `content/posts`
 
 
-Data Flow (How a Blog Post Is Rendered)
----------------------------------------
+Blog Data Flow (Rendering a Post)
+---------------------------------
 
 1. User navigates to:
    /blog/some-post-slug
 
-2. Next.js resolves the route:
+2. Next.js resolves:
    app/(site)/blog/[slug]/page.tsx
 
-3. The page component receives:
+3. Page receives:
    params.slug
 
 4. The page calls:
    getPostBySlug(slug) from lib/posts.ts
 
 5. lib/posts.ts:
-    - Reads the corresponding MDX file from content/posts
-    - Parses frontmatter metadata (title, date, etc.)
+    - Reads a file from content/posts
+    - Supports .txt, .md, .mdx
+    - Strips date prefix from filename
     - Returns structured post data
 
-6. The page component renders:
-    - Shared layout (TopBar)
+6. Page renders:
+    - Shared public layout
     - Post metadata
-    - MDX content as React components
+    - Parsed content
 
 7. If the slug does not exist:
     - notFound() is triggered
 
 
-Core Files Explained
--------------------
+Admin System Overview
+---------------------
 
-app/(site)/blog/[slug]/page.tsx
---------------------------------
-- Async Server Component
-- Receives dynamic params (slug)
-- Loads post data via lib/posts
-- Handles invalid slugs with notFound()
-- Renders full blog post view
+The admin system is an **internal tool**, not a CMS yet.
 
-app/(site)/blog/page.tsx
-------------------------
-- Blog index page
-- Loads all posts via lib/posts
-- Renders list / preview of posts
+Current capabilities:
+- Admin dashboard UI
+- Post listing / detection
+- Backend session verification
+- Logout handling
 
-lib/posts.ts
--------------
-- Central data access layer for blog content
-- Handles file system access and MDX parsing
-- Keeps routing and rendering logic clean
-
-content/posts/*.mdx
--------------------
-- Source of truth for blog content
-- File name defines the slug
-- Frontmatter stores metadata
-- Body is rendered as MDX
-
-components/shell/TopBar.tsx
----------------------------
-- Shared navigation component
-- Used across all public pages
-- Ensures consistent layout and navigation
-
-public/blog/visuals/
---------------------
-- Static images for blog posts
-- Served directly by Next.js
-- Referenced in MDX or page components
+Admin UI principles:
+- Clean, minimal, internal-tool aesthetic
+- Sidebar + large system header
+- No duplicated navigation actions
+- Tailwind-based styling
 
 
 Admin Authentication & Security
 --------------------------------
 
-The blog includes an **admin-only section** used for internal tools
-(e.g. editor preview, drafts, future CMS features).
+Authentication is **not handled by Next.js**.
 
-Authentication is **not handled by Next.js**, but delegated to the
-existing Spring Boot backend (`workspace-api`).
+Instead, it is delegated to the Spring Boot backend (`workspace-api`).
 
 Key principles:
-- Public blog remains fully accessible without login
-- Admin routes require a valid backend session
+- Single source of truth for auth (Spring)
 - Session-based authentication (JSESSIONID)
-- No JWT, no duplicate auth system
+- No JWT
+- No duplicate auth logic in frontend
+- Admin routes require a valid backend session
 
 
 Admin Route Protection (Frontend)
 ---------------------------------
 
-Route:
-- /admin → app/(site)/admin/page.tsx
+Protection is implemented in:
 
-Protection strategy:
-- Implemented as an **async Server Component guard**
-- On each request:
+app/(site)/admin/layout.tsx
+
+Strategy:
+- Admin layout is an async Server Component
+- On every request:
     - Calls backend endpoint `/api/me`
-    - Forwards cookies manually
+    - Forwards incoming cookies manually
     - If response is 401 → redirect to /login
     - If response is 200 → render admin UI
+    - Optional role check (ROLE_ADMIN)
 
-Important detail:
-- Server-side fetch must forward cookies explicitly
+Important technical detail:
+- Server-side fetch MUST forward cookies explicitly
+- Using headers().get("cookie") (async)
 - credentials: "include" is NOT sufficient in Server Components
 
 
@@ -215,30 +204,30 @@ Login Flow (End-to-End)
 1. User navigates to:
    http://localhost:3000/admin
 
-2. Admin page fetches:
+2. Admin layout fetches:
    GET http://localhost:8080/api/me
 
 3. If not authenticated:
     - Backend returns 401
-    - Next.js redirects to /login (frontend route)
+    - Next.js redirects to /login (frontend)
 
-4. Frontend /login page redirects to backend:
+4. Frontend /login redirects to backend:
    GET http://localhost:8080/login-redirect?redirect=http://localhost:3000/admin
 
 5. Backend:
     - Stores redirect target in session
-    - Redirects to /login (without query params)
+    - Redirects to /login (no query params)
 
 6. Spring Security default login page is shown
 
 7. User submits credentials
 
 8. On successful login:
-    - Custom successHandler reads redirect from session
-    - User is redirected to:
+    - Custom success handler reads redirect from session
+    - Redirects user back to:
       http://localhost:3000/admin
 
-9. Admin page loads successfully
+9. Admin UI loads successfully
 
 
 Backend Endpoints Involved
@@ -248,7 +237,7 @@ Backend Endpoints Involved
 - Returns current authenticated user
 - 200 → logged in
 - 401 → not authenticated
-- Never redirects (API-safe)
+- Never redirects
 
 /login
 - Spring Security default login page
@@ -259,23 +248,43 @@ Backend Endpoints Involved
 - Stores redirect target in session
 - Avoids unsupported query params on /login
 
+/logout
+- Invalidates session
+- Clears JSESSIONID cookie
+
+
+Admin Posts Manager
+-------------------
+
+Route:
+- /admin/posts
+
+Responsibilities:
+- Reads files from content/posts on the server
+- Detects available posts (.txt / .md / .mdx)
+- Derives slugs from filenames
+- Displays debug info (detected paths, files)
+- Links to public blog pages
+
+This is intentionally read-only for now.
+
 
 Why This Architecture
 ---------------------
-- Single source of truth for authentication (Spring)
-- No duplicate auth logic in frontend
-- Clean separation:
-    - Public content → no auth
-    - Admin tools → backend session
-- Works with SSR and Server Components
-- Production-ready pattern for multi-app monorepos
+- Clear separation of concerns
+- Public content stays simple and fast
+- Admin tools are protected and internal
+- No auth duplication
+- SSR-safe and production-ready
+- Scales cleanly to future CMS features
 
 
 How to Extend (Future)
 ----------------------
-- Admin editor UI
+- Admin post editor UI
 - Draft / preview mode
-- Role-based admin features
+- Role-based admin tools
+- Publishing workflow
 - CMS integration
 - Protected preview links
 
@@ -283,8 +292,9 @@ How to Extend (Future)
 Current Status
 --------------
 - App Router fully set up
-- Dynamic blog slugs working
-- Shared public layout integrated
-- MDX content loading stable
+- Public blog routing stable
+- Content loading via filesystem stable
+- Tailwind styling active
 - Admin auth flow stable and tested
-- Ready for styling, animations, and feature extensions
+- Admin dashboard + posts manager implemented
+- Ready for further UX polish and feature extensions
