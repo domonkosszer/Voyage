@@ -2,7 +2,7 @@ import Link from "next/link";
 import { TopBar, BackLink, InfoLink } from "../../../components/shell/TopBar";
 import { getAllPosts } from "../../../lib/posts";
 
-export default function BlogIndexPage() {
+export default async function BlogIndexPage() {
     const posts = getAllPosts();
 
     return (

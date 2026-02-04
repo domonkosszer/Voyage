@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 
-export default function EditPostPage() {
-    const params = useParams<{ slug: string }>();
-    const slug = params?.slug;
+type PageProps = {
+    params: {
+        slug: string;
+    };
+};
+
+export default function EditPostPage({ params }: PageProps) {
+    const { slug } = params;
 
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (!slug) return;
-
         let cancelled = false;
 
         (async () => {
@@ -31,14 +33,14 @@ export default function EditPostPage() {
     }, [slug]);
 
     async function save() {
-        if (!slug) return;
-
         setSaving(true);
+
         const res = await fetch(`/api/blog/${slug}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ mdx: content }),
         });
+
         setSaving(false);
 
         if (!res.ok) {
@@ -49,26 +51,36 @@ export default function EditPostPage() {
         alert("Gespeichert ✅");
     }
 
-    if (!slug) return <div>Missing slug…</div>;
-    if (loading) return <div>Lade…</div>;
+    if (loading) return <div>Lade...</div>;
 
     return (
         <div className="max-w-[980px]">
-            <h1 className="text-xl font-semibold mb-4">Post bearbeiten: {slug}</h1>
+            <h1 className="text-xl font-semibold mb-4">
+                Post bearbeiten: {slug}
+            </h1>
 
             <div className="grid gap-3">
-        <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full min-h-[520px] font-mono border rounded p-3"
-        />
+                <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="w-full min-h-[520px] font-mono border rounded p-3"
+                />
 
                 <div className="flex gap-3">
-                    <button onClick={save} disabled={saving} className="px-4 py-2 rounded border">
+                    <button
+                        onClick={save}
+                        disabled={saving}
+                        className="px-4 py-2 rounded border"
+                    >
                         {saving ? "Speichere..." : "Speichern"}
                     </button>
 
-                    <a href={`/blog/${slug}`} target="_blank" rel="noreferrer" className="px-4 py-2 rounded border">
+                    <a
+                        href={`/blog/${slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-4 py-2 rounded border"
+                    >
                         Preview öffnen
                     </a>
                 </div>

@@ -1,19 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 
-export default function EditPostPage() {
-    const params = useParams<{ slug: string }>();
-    const slug = params?.slug;
-
+export default function EditPostClient({ slug }: { slug: string }) {
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (!slug) return;
-
         let cancelled = false;
 
         (async () => {
@@ -31,14 +25,14 @@ export default function EditPostPage() {
     }, [slug]);
 
     async function save() {
-        if (!slug) return;
-
         setSaving(true);
+
         const res = await fetch(`/api/blog/${slug}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ mdx: content }),
         });
+
         setSaving(false);
 
         if (!res.ok) {
@@ -49,8 +43,7 @@ export default function EditPostPage() {
         alert("Gespeichert ✅");
     }
 
-    if (!slug) return <div>Missing slug…</div>;
-    if (loading) return <div>Lade…</div>;
+    if (loading) return <div>Lade...</div>;
 
     return (
         <div className="max-w-[980px]">
