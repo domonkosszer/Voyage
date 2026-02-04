@@ -112,7 +112,7 @@ export default function AdminPostsPage() {
         <ul>
           {posts.map((post) => (
             <li key={post.file}>
-              <Link href={`/blog/${post.slug}`}>{post.slug}</Link>
+              <Link href={`/apps/public-web/app/(site)/admin/api/blog/${post.slug}`}>{post.slug}</Link>
               <span style={{ opacity: 0.6 }}> ({post.file})</span>
             </li>
           ))}

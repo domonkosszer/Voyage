@@ -48,15 +48,32 @@ export default function AdminPage() {
                         {/* Main Action Card */}
                         <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
                             <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">Content</h3>
-                                <h2 className="text-2xl font-bold text-slate-800">Post Management</h2>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
+                                    Content
+                                </h3>
+                                <h2 className="text-2xl font-bold text-slate-800">
+                                    Post Management
+                                </h2>
                                 <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-                                    Review and edit all current voyage publications.
+                                    Create, review and edit voyage publications.
                                 </p>
                             </div>
-                            <Link href="/admin/posts" className="mt-6 inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all">
-                                Manage Posts →
-                            </Link>
+
+                            <div className="mt-6 flex flex-col gap-3">
+                                <Link
+                                    href="/admin/posts/new"
+                                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition"
+                                >
+                                    + New Post
+                                </Link>
+
+                                <Link
+                                    href="/admin/posts"
+                                    className="inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all"
+                                >
+                                    Manage Posts →
+                                </Link>
+                            </div>
                         </div>
 
                         {/* Database Status Card */}
