@@ -10,7 +10,7 @@ build/
 .classpath
 .factorypath
 .project
-.settings
+.setti
 .springBeans
 .sts4-cache
 bin/
@@ -49,3 +49,14 @@ build/
 
 # Logs
 *.log
+
+### Local databases (DO NOT COMMIT)
+apps/workspace-api/data/
+apps/workspace-api/data/*.mv.db
+apps/workspace-api/data/*.trace.db
+apps/workspace-api/data/*.lock.db
+
+### Any H2 databases anywhere
+*.mv.db
+*.trace.db
+*.lock.db
