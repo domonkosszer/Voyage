@@ -57,7 +57,11 @@ export default async function BlogIndexPage() {
                         >
                             <div className="aspect-square w-full bg-neutral-200">
                                 <img
-                                    src={p.meta.image ?? "/blog/placeholder.jpg"}
+                                    src={
+                                        p.meta.image
+                                            ? `/content/posts/${p.slug}/${p.meta.image.replace(/^\.\/+/, "")}`
+                                            : "/blog/placeholder.jpg"
+                                    }
                                     alt={p.meta.title}
                                     className="h-full w-full object-cover"
                                 />
