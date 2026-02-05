@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
 
-type PageProps = {
-    params: {
-        slug: string;
-    };
-};
+export default function EditPostPage() {
+    const params = useParams<{ slug?: string }>();
 
-export default function EditPostPage({ params }: PageProps) {
-    const { slug } = params;
+    const slug = useMemo(() => {
+        const s = params?.slug;
+        return typeof s === "string" ? s : "";
+    }, [params]);
 
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
@@ -17,6 +17,11 @@ export default function EditPostPage({ params }: PageProps) {
 
     useEffect(() => {
         let cancelled = false;
+
+        if (!slug) {
+            setLoading(false);
+            return;
+        }
 
         (async () => {
             const res = await fetch(`/api/blog/${slug}/save`);
@@ -33,6 +38,11 @@ export default function EditPostPage({ params }: PageProps) {
     }, [slug]);
 
     async function save() {
+        if (!slug) {
+            alert("Kein Slug gefunden – bitte die URL prüfen.");
+            return;
+        }
+
         setSaving(true);
 
         const res = await fetch(`/api/blog/${slug}/save`, {
@@ -52,6 +62,10 @@ export default function EditPostPage({ params }: PageProps) {
     }
 
     if (loading) return <div>Lade...</div>;
+
+    if (!slug) {
+        return <div>Kein Slug gefunden (Route muss /admin/posts/[slug]/edit sein).</div>;
+    }
 
     return (
         <div className="max-w-[980px]">

@@ -1,78 +1,46 @@
-"use client";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import matter from "gray-matter";
+import { compileMDX } from "next-mdx-remote/rsc";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+function postFile(slug: string) {
+    return path.join(process.cwd(), "content", "posts", slug, "index.mdx");
+}
 
-export default function EditPostPage() {
-    const params = useParams<{ slug: string }>();
-    const slug = params?.slug;
-
-    const [content, setContent] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-
-    useEffect(() => {
-        if (!slug) return;
-
-        let cancelled = false;
-
-        (async () => {
-            const res = await fetch(`/api/blog/${slug}/save`);
-            if (!cancelled && res.ok) {
-                const data = await res.json();
-                setContent(data.mdx ?? "");
-            }
-            if (!cancelled) setLoading(false);
-        })();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [slug]);
-
-    async function save() {
-        if (!slug) return;
-
-        setSaving(true);
-        const res = await fetch(`/api/blog/${slug}/save`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mdx: content }),
-        });
-        setSaving(false);
-
-        if (!res.ok) {
-            alert(await res.text());
-            return;
-        }
-
-        alert("Gespeichert ✅");
+export default async function BlogPostPage({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
+    const { slug } = await params;
+    if (!slug) {
+        throw new Error("Missing slug");
     }
+    const raw = await readFile(postFile(slug), "utf8");
+    const { content, data } = matter(raw);
 
-    if (!slug) return <div>Missing slug…</div>;
-    if (loading) return <div>Lade…</div>;
+    const { content: mdx } = await compileMDX({
+        source: content,
+        options: { parseFrontmatter: false },
+    });
 
     return (
-        <div className="max-w-[980px]">
-            <h1 className="text-xl font-semibold mb-4">Post bearbeiten: {slug}</h1>
+        <article className="mx-auto max-w-[760px] py-10">
+            <h1 className="text-3xl font-bold">{String(data.title ?? "")}</h1>
 
-            <div className="grid gap-3">
-        <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full min-h-[520px] font-mono border rounded p-3"
-        />
+            {data.excerpt ? (
+                <p className="mt-3 text-lg opacity-80">{String(data.excerpt)}</p>
+            ) : null}
 
-                <div className="flex gap-3">
-                    <button onClick={save} disabled={saving} className="px-4 py-2 rounded border">
-                        {saving ? "Speichere..." : "Speichern"}
-                    </button>
+            {data.image ? (
+                <img
+                    src={String(data.image)}
+                    alt={String(data.title ?? "")}
+                    className="mt-6 w-full rounded"
+                />
+            ) : null}
 
-                    <a href={`/blog/${slug}`} target="_blank" rel="noreferrer" className="px-4 py-2 rounded border">
-                        Preview öffnen
-                    </a>
-                </div>
-            </div>
-        </div>
+            <div className="prose prose-neutral mt-8 max-w-none">{mdx}</div>
+        </article>
     );
 }

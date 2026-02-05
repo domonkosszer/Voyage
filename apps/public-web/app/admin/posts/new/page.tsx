@@ -14,7 +14,6 @@ export default function NewBlogPostPage() {
         const form = e.currentTarget;
         const fd = new FormData(form);
 
-        // ✅ use the API route (must live under app/api/blog/create/route.ts)
         const res = await fetch("/api/blog/create", {
             method: "POST",
             body: fd,
@@ -29,8 +28,6 @@ export default function NewBlogPostPage() {
         }
 
         const data = (await res.json()) as { slug: string };
-
-        // ✅ match your existing route: app/(site)/blog/[slug]/edit/page.tsx
         router.push(`/admin/posts/${data.slug}/edit`);
     }
 
@@ -56,13 +53,23 @@ export default function NewBlogPostPage() {
                 </label>
 
                 <label>
-                    Untertitel
-                    <input name="subtitle" required style={{ width: "100%" }} />
+                    Excerpt (Teaser)
+                    <textarea
+                        name="excerpt"
+                        required
+                        rows={3}
+                        style={{ width: "100%", resize: "vertical" }}
+                        placeholder="Kurzbeschreibung für die Blog-Übersicht…"
+                    />
                 </label>
 
                 <label>
-                    Cover Bild
-                    <input name="cover" type="file" accept="image/*" />
+                    Image (Pfad)
+                    <input
+                        name="image"
+                        style={{ width: "100%" }}
+                        placeholder='/blog/first.jpg'
+                    />
                 </label>
 
                 <button disabled={loading} type="submit">
