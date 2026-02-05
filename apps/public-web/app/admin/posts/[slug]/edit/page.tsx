@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
 type PageProps = {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 };
 
 export default function EditPostPage({ params }: PageProps) {
-    const { slug } = params;
+    const { slug } = use(params);
 
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
@@ -19,12 +19,28 @@ export default function EditPostPage({ params }: PageProps) {
         let cancelled = false;
 
         (async () => {
-            const res = await fetch(`/api/blog/${slug}/save`);
-            if (!cancelled && res.ok) {
+            try {
+                const res = await fetch(`/api/blog/${slug}/save`);
+                if (!res.ok) {
+                    throw new Error(await res.text());
+                }
                 const data = await res.json();
-                setContent(data.mdx ?? "");
+                if (!cancelled) {
+                    const raw = data.mdx ?? "";
+
+                    // Frontmatter entfernen
+                    const contentOnly = raw.replace(/^---[\s\S]*?---\s*/, "");
+
+                    setContent(contentOnly);
+                }
+            } catch (err) {
+                console.error("Load failed:", err);
+                if (!cancelled) {
+                    alert("Load failed");
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
             }
-            if (!cancelled) setLoading(false);
         })();
 
         return () => {
@@ -33,12 +49,22 @@ export default function EditPostPage({ params }: PageProps) {
     }, [slug]);
 
     async function save() {
+        const frontmatter = `---
+title: "${slug}"
+excerpt: ""
+date: "${new Date().toISOString().slice(0, 10)}"
+image: "./cover.jpg"
+---
+
+`;
+        const fullMdx = frontmatter + content;
+
         setSaving(true);
 
         const res = await fetch(`/api/blog/${slug}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mdx: content }),
+            body: JSON.stringify({ mdx: fullMdx }),
         });
 
         setSaving(false);

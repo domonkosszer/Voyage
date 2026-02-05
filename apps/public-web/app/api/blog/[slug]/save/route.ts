@@ -1,9 +1,23 @@
 import { NextResponse } from "next/server";
 import path from "path";
-import { mkdir, readFile, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile, readdir } from "fs/promises";
 
-function postFile(slug: string) {
-    return path.join(process.cwd(), "content", "posts", slug, "index.mdx");
+function postDir(slug: string) {
+    return path.join(process.cwd(), "public", "content", "posts", slug);
+}
+
+async function latestPostFile(slug: string) {
+    const dir = postDir(slug);
+    const files = (await readdir(dir))
+        .filter((f) => f.endsWith(".mdx"))
+        .sort()
+        .reverse();
+
+    if (!files.length) {
+        throw new Error("No mdx file found");
+    }
+
+    return path.join(dir, files[0]);
 }
 
 type Ctx = {
@@ -15,7 +29,7 @@ export async function GET(_: Request, ctx: Ctx) {
     if (!slug) return new NextResponse("Missing slug", { status: 400 });
 
     try {
-        const mdx = await readFile(postFile(slug), "utf8");
+        const mdx = await readFile(await latestPostFile(slug), "utf8");
         return NextResponse.json({ mdx });
     } catch {
         return new NextResponse("Not found", { status: 404 });
@@ -33,9 +47,7 @@ export async function POST(req: Request, ctx: Ctx) {
         return new NextResponse("Empty content", { status: 400 });
     }
 
-    // ✅ ensure /content/posts/<slug>/ exists
-    await mkdir(path.dirname(postFile(slug)), { recursive: true });
-
-    await writeFile(postFile(slug), mdx, "utf8");
+    const file = await latestPostFile(slug);
+    await writeFile(file, mdx, "utf8");
     return NextResponse.json({ ok: true });
 }

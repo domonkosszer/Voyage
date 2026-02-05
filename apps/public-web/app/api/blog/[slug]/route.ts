@@ -3,11 +3,21 @@ import path from "path";
 import { readdir, readFile, rm } from "fs/promises";
 
 function postDir(slug: string) {
-    return path.join(process.cwd(), "content", "posts", slug);
+    return path.join(process.cwd(), "public", "content", "posts", slug);
 }
 
-function postFile(slug: string) {
-    return path.join(postDir(slug), "index.mdx");
+async function latestPostFile(slug: string) {
+    const dir = postDir(slug);
+    const files = (await readdir(dir))
+        .filter((f) => f.endsWith(".mdx"))
+        .sort()
+        .reverse();
+
+    if (!files.length) {
+        throw new Error("No mdx file found");
+    }
+
+    return path.join(dir, files[0]);
 }
 
 type Ctx = {
@@ -21,7 +31,7 @@ export async function GET(_: Request, ctx: Ctx) {
     const { slug } = ctx.params;
 
     try {
-        const mdx = await readFile(postFile(slug), "utf8");
+        const mdx = await readFile(await latestPostFile(slug), "utf8");
         return NextResponse.json({ slug, mdx });
     } catch {
         return new NextResponse("Not found", { status: 404 });

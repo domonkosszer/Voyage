@@ -45,19 +45,13 @@ export default function NewBlogPostPage() {
                 </label>
 
                 <label>
-                    Datum
-                    <input
-                        name="date"
-                        type="date"
+                    Excerpt
+                    <textarea
+                        name="excerpt"
                         required
-                        defaultValue={new Date().toISOString().slice(0, 10)}
+                        rows={4}
                         style={{ width: "100%" }}
-                    />
-                </label>
-
-                <label>
-                    Untertitel
-                    <input name="subtitle" required style={{ width: "100%" }} />
+                    ></textarea>
                 </label>
 
                 <label>

@@ -3,7 +3,7 @@ import path from "path";
 import { readdir, readFile } from "fs/promises";
 
 function postsRoot() {
-    return path.join(process.cwd(), "content", "posts");
+    return path.join(process.cwd(), "public", "content", "posts");
 }
 
 function postFile(slug: string) {
