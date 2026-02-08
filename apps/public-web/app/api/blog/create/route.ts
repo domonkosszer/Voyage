@@ -1,10 +1,12 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
 import slugify from "slugify";
-import path from "path";
+import * as path from "path";
 import { mkdir, writeFile } from "fs/promises";
 
 function postsRoot() {
-    return path.join(process.cwd(), "public", "content", "posts")
+    return path.join(process.cwd(), "public", "content", "posts");
 }
 
 function today() {
@@ -46,12 +48,15 @@ export async function POST(req: Request) {
         imageLine = `image: "./${filename}"`;
     }
 
-    const mdx = `---
-title: "${title.replaceAll('"', '\\"')}"
-excerpt: "${excerpt.replaceAll('"', '\\"')}"
+    const esc = (s: string) =>
+        s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
+    const mdx =
+        `---
+title: "${esc(title)}"
+excerpt: "${esc(excerpt)}"
 date: "${date}"
-${imageLine}
----
+${imageLine ? `${imageLine}\n` : ""}---
 
 `;
 
