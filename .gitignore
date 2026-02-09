@@ -18,3 +18,9 @@ pnpm-debug.log*
 
 # env
 .env*
+
+# Assets / Uploads
+public/blog/visuals/
+
+# OS
+.DS_Store
