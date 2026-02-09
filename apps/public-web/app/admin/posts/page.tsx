@@ -3,170 +3,121 @@ import path from "node:path";
 import Link from "next/link";
 
 type Post = {
+  file: string;
   slug: string;
-  filePath: string;
-  updatedAtMs?: number;
 };
 
 type PostsResult = {
   postsDir: string;
   tried: string[];
-  allEntries: string[];
+  allFiles: string[];
   posts: Post[];
 };
 
 function resolvePostsDir(): { postsDir: string; tried: string[] } {
   const tried: string[] = [];
 
-  // 1️⃣ preferred: public/content/posts (your current setup)
-  const p1 = path.join(process.cwd(), "public", "content", "posts");
-  tried.push(p1);
-  if (fs.existsSync(p1)) return { postsDir: p1, tried };
+  // 1) When running `npm run dev` inside apps/public-web
+  const candidate1 = path.join(process.cwd(), "content", "posts");
+  tried.push(candidate1);
+  if (fs.existsSync(candidate1)) return { postsDir: candidate1, tried };
 
-  // 2️⃣ monorepo variant
-  const p2 = path.join(
-      process.cwd(),
-      "apps",
-      "public-web",
-      "public",
-      "content",
-      "posts"
-  );
-  tried.push(p2);
-  if (fs.existsSync(p2)) return { postsDir: p2, tried };
+  // 2) When running Next from monorepo root (process.cwd() == repo root)
+  const candidate2 = path.join(process.cwd(), "apps", "public-web", "content", "posts");
+  tried.push(candidate2);
+  if (fs.existsSync(candidate2)) return { postsDir: candidate2, tried };
 
-  // 3️⃣ future recommended location
-  const p3 = path.join(process.cwd(), "content", "posts");
-  tried.push(p3);
-  if (fs.existsSync(p3)) return { postsDir: p3, tried };
+  // 3) Fallback: try relative to this file (best-effort)
+  const candidate3 = path.join(process.cwd(), "..", "content", "posts");
+  tried.push(candidate3);
+  if (fs.existsSync(candidate3)) return { postsDir: candidate3, tried };
 
-  return { postsDir: p1, tried };
+  return { postsDir: candidate1, tried };
 }
 
 function getPosts(): PostsResult {
   const { postsDir, tried } = resolvePostsDir();
 
   if (!fs.existsSync(postsDir)) {
-    return { postsDir, tried, allEntries: [], posts: [] };
+    return { postsDir, tried, allFiles: [], posts: [] };
   }
 
-  const allEntries = fs.readdirSync(postsDir);
-  const posts: Post[] = [];
+  const allFiles = fs.readdirSync(postsDir);
 
-  for (const entry of allEntries) {
-    const full = path.join(postsDir, entry);
+  const supported = allFiles.filter((f) =>
+    f.toLowerCase().endsWith(".txt") ||
+    f.toLowerCase().endsWith(".md") ||
+    f.toLowerCase().endsWith(".mdx")
+  );
 
-    let stat: fs.Stats;
-    try {
-      stat = fs.statSync(full);
-    } catch {
-      continue;
-    }
+  const posts = supported.map((file) => {
+    const base = file.replace(/\.(txt|md|mdx)$/i, "");
 
-    // 📁 Folder posts
-    if (stat.isDirectory()) {
-      const files = fs.readdirSync(full);
+    // Strip date prefix (YY-MM-DD- or YYYY-MM-DD-)
+    const slug = base
+      .replace(/^\d{2}-\d{2}-\d{2}-/, "")
+      .replace(/^\d{4}-\d{2}-\d{2}-/, "");
 
-      // prefer index.mdx / index.md
-      const preferred =
-          files.find((f) => /^index\.(mdx|md)$/i.test(f)) ??
-          files.find((f) => /\.(mdx|md)$/i.test(f)) ??
-          null;
+    return { file, slug };
+  });
 
-      if (preferred) {
-        const filePath = path.join(full, preferred);
-        const s = fs.statSync(filePath);
-        posts.push({
-          slug: entry,
-          filePath,
-          updatedAtMs: s.mtimeMs,
-        });
-      }
-    }
-
-    // 📄 Flat file posts (optional support)
-    else if (/\.(mdx|md|txt)$/i.test(entry)) {
-      const base = entry.replace(/\.(txt|md|mdx)$/i, "");
-      const s = fs.statSync(full);
-      posts.push({
-        slug: base,
-        filePath: full,
-        updatedAtMs: s.mtimeMs,
-      });
-    }
-  }
-
-  posts.sort((a, b) => a.slug.localeCompare(b.slug));
-
-  return { postsDir, tried, allEntries, posts };
+  return { postsDir, tried, allFiles, posts };
 }
 
 export default function AdminPostsPage() {
-  const { posts, postsDir, tried, allEntries } = getPosts();
+  const { postsDir, tried, allFiles, posts } = getPosts();
 
   return (
-      <main className="mx-auto w-full max-w-5xl px-[24px] py-[32px]">
-        {/* HEADER */}
-        <div className="mb-[24px] flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">Posts</h1>
-            <p className="mt-[4px] text-sm text-zinc-500">
-              Manage blog posts stored on disk
-            </p>
-          </div>
+    <main style={{ maxWidth: 900 }}>
+      <h1>Posts</h1>
 
-          <Link
-              href="/admin/posts/new"
-              className="rounded-xl bg-zinc-900 px-[16px] py-[8px] text-sm font-semibold text-white hover:bg-zinc-800"
-          >
-            + New post
-          </Link>
+      <p style={{ opacity: 0.8 }}>
+        <Link href="/admin">← Back to Admin</Link>
+      </p>
+
+      <section
+        style={{
+          padding: 12,
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          marginBottom: 16,
+        }}
+      >
+        <div>
+          <strong>postsDir:</strong> {postsDir}
+        </div>
+        <div>
+          <strong>files in folder:</strong> {allFiles.length}
+        </div>
+        <div>
+          <strong>posts detected:</strong> {posts.length}
         </div>
 
-        {/* LIST */}
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-          <ul className="divide-y divide-zinc-200">
-            {posts.map((post) => (
-                <li
-                    key={post.slug}
-                    className="flex items-center justify-between gap-[16px] px-[24px] py-[16px] pr-[32px] hover:bg-zinc-50"
-                >
-                  <div className="min-w-0">
-                    <div className="font-medium text-zinc-900 truncate">
-                      {post.slug}
-                    </div>
-                    <div className="mt-[4px] text-xs text-zinc-500">
-                      Last updated{" "}
-                      {post.updatedAtMs
-                          ? new Date(post.updatedAtMs)
-                              .toISOString()
-                              .slice(0, 16)
-                              .replace("T", " ")
-                          : "—"}
-                    </div>
-                  </div>
+        <details style={{ marginTop: 8 }}>
+          <summary>Debug: paths tried</summary>
+          <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{tried.join("\n")}</pre>
+        </details>
 
-                  <div className="flex items-center gap-[8px] shrink-0 pr-[16px]">
-                    <Link
-                        href={`/admin/posts/${post.slug}`}
-                        className="rounded-lg border border-zinc-200 px-[12px] py-[6px] text-sm font-medium text-zinc-700 hover:bg-zinc-100"
-                    >
-                      Edit
-                    </Link>
+        {allFiles.length > 0 && (
+          <details style={{ marginTop: 8 }}>
+            <summary>Debug: files seen</summary>
+            <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{allFiles.join("\n")}</pre>
+          </details>
+        )}
+      </section>
 
-                    <Link
-                        href={`/blog/${post.slug}`}
-                        target="_blank"
-                        className="rounded-lg border border-zinc-200 px-[12px] py-[6px] text-sm font-medium text-zinc-700 hover:bg-zinc-100"
-                    >
-                      View
-                    </Link>
-                  </div>
-                </li>
-            ))}
-          </ul>
-        </div>
-
-      </main>
+      {posts.length === 0 ? (
+        <p>No posts found.</p>
+      ) : (
+        <ul>
+          {posts.map((post) => (
+            <li key={post.file}>
+              <Link href={`/apps/public-web/app/(site)/admin/api/blog/${post.slug}`}>{post.slug}</Link>
+              <span style={{ opacity: 0.6 }}> ({post.file})</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 }

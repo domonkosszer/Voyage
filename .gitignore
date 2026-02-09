@@ -2,19 +2,13 @@
 .idea/
 *.iml
 
-# dependencies
-node_modules/
-**/node_modules/
-
-# next
+# Next.js
 .next/
-**/.next/
+node_modules/
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+# Assets / Uploads
+public/blog/visuals/
+public/content/
 
-# env
-.env*
+# OS
+.DS_Store
