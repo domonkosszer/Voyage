@@ -1,3 +1,14 @@
 ### IDE
 .idea/
 *.iml
+
+# Next.js
+.next/
+node_modules/
+
+# Assets / Uploads
+public/blog/visuals/
+public/content/
+
+# OS
+.DS_Store
