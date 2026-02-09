@@ -18,37 +18,28 @@ export default async function BlogIndexPage() {
                     <div
                         className="flex whitespace-nowrap"
                         style={{
-                            animation: "marquee-right 45s linear infinite",
+                            animation: "marquee 45s linear infinite",
                         }}
                     >
                         <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG
                         </h1>
                         <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
-                            BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG
-                        </h1>
-                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
-                            BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG
+                            BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG  BLOG · BLOG · BLOG · BLOG
                         </h1>
                     </div>
 
                     <div
-                        className="flex whitespace-nowrap w-max mt-[-30px]"
-                        style={{
-                            animation: "marquee 40s linear infinite",
-                        }}
+                        className="flex whitespace-nowrap mt-[-30px]"
+                        /*style={{
+                            animation: "marquee 50s linear infinite",
+                        }}*/
                     >
                         <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
-                            Thoughts, experiments and notes from the VOYAGE universe.
+                            Thoughts, experiments and notes from the Voyage universe.
                         </p>
                         <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
-                            Thoughts, experiments and notes from the VOYAGE universe.
-                        </p>
-                        <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
-                            Thoughts, experiments and notes from the VOYAGE universe.
-                        </p>
-                        <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
-                            Thoughts, experiments and notes from the VOYAGE universe.
+                            Thoughts, experiments and notes from the Voyage universe.
                         </p>
                     </div>
                 </div>
@@ -63,10 +54,7 @@ export default async function BlogIndexPage() {
                             key={p.slug}
                             className="rounded-2xl bg-neutral-50 overflow-hidden"
                         >
-                            <Link
-                                href={`/blog/${p.slug}`}
-                                className="block aspect-square w-full bg-neutral-200"
-                            >
+                            <div className="aspect-square w-full bg-neutral-200">
                                 <img
                                     src={
                                         p.meta.image
@@ -76,7 +64,7 @@ export default async function BlogIndexPage() {
                                     alt={p.meta.title}
                                     className="h-full w-full object-cover"
                                 />
-                            </Link>
+                            </div>
 
                             <div className="p-10">
                                 <div className="text-xs opacity-60">

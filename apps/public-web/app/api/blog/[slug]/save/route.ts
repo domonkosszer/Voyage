@@ -1,66 +1,56 @@
-export const runtime = "nodejs";
-
 import { NextResponse } from "next/server";
-import * as path from "path";
-import { readFile, writeFile, readdir } from "fs/promises";
-import matter from "gray-matter";
+import path from "node:path";
+import fs from "node:fs";
+import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 
-function postDir(slug: string) {
-    return path.join(process.cwd(), "public", "content", "posts", slug);
+function postsDir() {
+    return path.join(process.cwd(), "public", "content", "posts");
 }
 
-async function latestPostFile(slug: string) {
+function postDir(slug: string) {
+    return path.join(postsDir(), slug);
+}
+
+async function pickPostFile(slug: string) {
     const dir = postDir(slug);
+
+    // Prefer index.mdx (stable, single file per post)
+    const indexPath = path.join(dir, "index.mdx");
+    if (fs.existsSync(indexPath)) return indexPath;
+
+    // Otherwise fallback: latest .mdx by filename
     const files = (await readdir(dir)).filter((f) => f.endsWith(".mdx")).sort().reverse();
     if (!files.length) throw new Error("No mdx file found");
     return path.join(dir, files[0]);
 }
 
-type Ctx = { params: Promise<{ slug: string }> };
-
-export async function GET(_: Request, ctx: Ctx) {
+export async function GET(_req: Request, ctx: { params: Promise<{ slug: string }> }) {
     const { slug } = await ctx.params;
+    if (!slug) return new NextResponse("Missing slug", { status: 400 });
 
     try {
-        const mdx = await readFile(await latestPostFile(slug), "utf8");
-        return NextResponse.json({ mdx });
-    } catch {
-        return new NextResponse("Not found", { status: 404 });
+        const file = await pickPostFile(slug);
+        const mdx = await readFile(file, "utf8");
+        return NextResponse.json({ mdx, file });
+    } catch (e: any) {
+        return new NextResponse(e?.message ?? "Not found", { status: 404 });
     }
 }
 
-export async function POST(req: Request, ctx: Ctx) {
+export async function POST(req: Request, ctx: { params: Promise<{ slug: string }> }) {
     const { slug } = await ctx.params;
+    if (!slug) return new NextResponse("Missing slug", { status: 400 });
 
     const body = await req.json().catch(() => null);
-    const incomingMdx = String(body?.mdx ?? "");
-    if (!incomingMdx.trim()) return new NextResponse("Empty content", { status: 400 });
+    const mdx = body?.mdx;
+    if (typeof mdx !== "string") return new NextResponse("Invalid body", { status: 400 });
 
-    const file = await latestPostFile(slug);
+    const dir = postDir(slug);
+    await mkdir(dir, { recursive: true });
 
-    // Read existing file so we can preserve metadata
-    const existingMdx = await readFile(file, "utf8");
+    // Write stable file
+    const outPath = path.join(dir, "index.mdx");
+    await writeFile(outPath, mdx, "utf8");
 
-    const existing = matter(existingMdx);
-    const incoming = matter(incomingMdx);
-
-    const mergedData: Record<string, any> = {
-        ...existing.data,
-        ...incoming.data,
-    };
-
-    // Preserve excerpt if incoming dropped it OR made it empty
-    if (incoming.data?.excerpt === undefined || String(incoming.data.excerpt ?? "").trim() === "") {
-        mergedData.excerpt = existing.data?.excerpt;
-    }
-
-    // Preserve other common fields if missing
-    if (incoming.data?.image === undefined) mergedData.image = existing.data?.image;
-    if (incoming.data?.title === undefined) mergedData.title = existing.data?.title;
-    if (incoming.data?.date === undefined) mergedData.date = existing.data?.date;
-
-    const mergedMdx = matter.stringify(incoming.content, mergedData);
-
-    await writeFile(file, mergedMdx, "utf8");
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, path: outPath });
 }

@@ -11,22 +11,14 @@
 }
 
 @keyframes marquee {
-    from {
+    0% {
         transform: translateX(0);
     }
-    to {
+    100% {
         transform: translateX(-50%);
     }
 }
 
-@keyframes marquee-right {
-    from {
-        transform: translateX(-50%);
-    }
-    to {
-        transform: translateX(0);
-    }
-}
 
 /* Minimal default to keep things clean */
 html, body {

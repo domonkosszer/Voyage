@@ -20,38 +20,18 @@ export default async function BlogPostPage({ params }: PageProps) {
     const { meta, content } = post;
 
     return (
-        <>
-            {/* FIXED TITLE */}
-            <h1 className="fixed top-[-60px]  left-1/2 -translate-x-1/2 text-[200px] font-bold text-center z-30 pointer-events-none">
+        <article className="max-w-[980px] mx-auto px-6 py-12">
+            <h1 className="text-4xl font-bold mb-4">
                 {meta.title}
             </h1>
 
-            {/* FIXED BLUR LAYER */}
-            <div
-                className="
-                    fixed
-                    top-0
-                    left-1/2
-                    -translate-x-1/2
-                     w-[1330px]
-                     h-[25vh]
-                     z-10
-                     backdrop-blur-[00px]
-                     bg-white/30
-                     pointer-events-none
-                    "
-            />
+            <p className="text-sm text-gray-500 mb-8">
+                {meta.date}
+            </p>
 
-            {/* CONTENT */}
-            <article className="mx-auto max-w-[1020px] px-[40px] pt-[300px] pb-[40px]">
-                <p className="text-sm text-gray-500 mb-[100px] text-center">
-                    {meta.date}
-                </p>
-
-                <div className="prose prose-neutral max-w-none text-justify">
-                    <MDXRemote source={content} />
-                </div>
-            </article>
-        </>
+            <div className="prose prose-neutral max-w-none">
+                <MDXRemote source={content} />
+            </div>
+        </article>
     );
 }
