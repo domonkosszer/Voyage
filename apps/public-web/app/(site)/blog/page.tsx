@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { TopBar, BackLink, InfoLink } from "../../../components/shell/TopBar";
 import { getAllPosts } from "@/lib/posts";
@@ -57,12 +58,10 @@ export default async function BlogIndexPage() {
             {/*blog section*/}
 
             <main className="mt-[10px] px-[30px] md:px-[10px]">
-                <div className="grid grid-cols-3 gap-x-[30px] gap-y-[90px] mt-[50]">
-                    {posts.map((p) => (
-                        <article
-                            key={p.slug}
-                            className="rounded-2xl bg-neutral-50 overflow-hidden"
-                        >
+                <div className="grid grid-cols-3 gap-x-[30px] gap-y-[px] mt-[50]">
+                    {posts.map((p, index) => (
+                        <React.Fragment key={p.slug}>
+                            <article className="rounded-2xl bg-neutral-50 overflow-hidden">
                             <Link
                                 href={`/blog/${p.slug}`}
                                 className="block aspect-square w-full bg-neutral-200"
@@ -95,10 +94,33 @@ export default async function BlogIndexPage() {
                                     </p>
                                 )}
                             </div>
-                        </article>
+                            </article>
+
+                            {index === 2 && (
+                                <div className="col-span-3 rounded-2xl bg-neutral-100 px-[30px] pt-[10px] pb-[20px]">                                    <div className="flex justify-center">
+                                        <img
+                                            src="/images/feature.jpg"
+                                            alt="Feature"
+                                            className="w-full max-w-4xl rounded-xl object-cover"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {index === 5 && (
+                                <div className="col-span-3 rounded-2xl bg-neutral-100 px-[30px] pt-[10px] pb-[20px]">                                    <div className="flex justify-center">
+                                    <img
+                                        src="/images/feature.jpg"
+                                        alt="Feature"
+                                        className="w-full max-w-4xl rounded-xl object-cover"
+                                    />
+                                </div>
+                                </div>
+                            )}
+
+                        </React.Fragment>
                     ))}
                 </div>
             </main>
         </div>
-    );
-}
+    );}
