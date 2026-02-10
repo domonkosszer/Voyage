@@ -1,9 +1,11 @@
+// app/admin/posts/[slug]/page.tsx
+
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import Link from "next/link";
+import ClientEditor from "./edit/ClientEditor";function resolvePostsDir(): { postsDir: string; tried: string[] } {
 
-function resolvePostsDir(): { postsDir: string; tried: string[] } {
     const tried: string[] = [];
 
     const p1 = path.join(process.cwd(), "public", "content", "posts");
@@ -33,7 +35,6 @@ async function findPostFile(slug: string): Promise<{
     const { postsDir, tried: triedDirs } = resolvePostsDir();
     const triedFiles: string[] = [];
 
-    // Guard (prevents the path.join crash even if something upstream breaks)
     if (!slug) return { filePath: null, triedFiles, triedDirs };
 
     const folder = path.join(postsDir, slug);
@@ -70,7 +71,6 @@ export default async function AdminPostEditPage({
                                                 }: {
     params: Promise<{ slug: string }>;
 }) {
-    // ✅ IMPORTANT: unwrap params (Next is passing params as a Promise in your setup)
     const { slug } = await params;
 
     const { filePath, triedFiles, triedDirs } = await findPostFile(slug);
@@ -100,7 +100,6 @@ export default async function AdminPostEditPage({
         );
     }
 
-    const mdx = await fsp.readFile(filePath, "utf8");
     const stat = await fsp.stat(filePath);
 
     return (
@@ -138,20 +137,9 @@ export default async function AdminPostEditPage({
                     </div>
                 </div>
 
-                {/* Editor fills the rest */}
-                <div className="flex-1 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-                    <div className="flex h-full flex-col">
-                        <div className="border-b border-zinc-200 px-4 py-3 text-sm font-semibold text-zinc-700">
-                            Content (read-only)
-                        </div>
-
-                        <textarea
-                            className="h-full w-full resize-none bg-white p-4 font-mono text-sm leading-6 text-zinc-900 outline-none"
-                            defaultValue={mdx}
-                            spellCheck={false}
-                            readOnly
-                        />
-                    </div>
+                {/* Real editor */}
+                <div className="flex-1 overflow-auto rounded-2xl border border-zinc-200 bg-white shadow-sm p-4">
+                    <ClientEditor slug={slug} />
                 </div>
             </div>
         </main>

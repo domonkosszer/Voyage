@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export default function EditPostClient({ slug }: { slug: string }) {
-    const [content, setContent] = useState("");
+    const [body, setBody] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -14,7 +14,7 @@ export default function EditPostClient({ slug }: { slug: string }) {
             const res = await fetch(`/api/blog/${slug}/save`);
             if (!cancelled && res.ok) {
                 const data = await res.json();
-                setContent(data.mdx ?? "");
+                setBody(data.body ?? "");
             }
             if (!cancelled) setLoading(false);
         })();
@@ -30,7 +30,7 @@ export default function EditPostClient({ slug }: { slug: string }) {
         const res = await fetch(`/api/blog/${slug}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mdx: content }),
+            body: JSON.stringify({ body }),
         });
 
         setSaving(false);
@@ -51,9 +51,10 @@ export default function EditPostClient({ slug }: { slug: string }) {
 
             <div className="grid gap-3">
         <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
             className="w-full min-h-[520px] font-mono border rounded p-3"
+            placeholder="Write your post content here (MDX)…"
         />
 
                 <div className="flex gap-3">
