@@ -19,7 +19,7 @@ export default function HomePage(){
             <main className="mx-auto min-w-6xl px-7 py-160 text-center">
 
                 <h2 className="font-serif text-[10.5rem] tracking-[0.2em] opacity-5">
-                    BE THE PENGUIN
+                    for the few.
                 </h2>
 
                 <p className="mt-3 opacity-60">
