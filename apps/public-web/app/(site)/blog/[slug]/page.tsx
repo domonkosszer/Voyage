@@ -36,7 +36,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         <>
             {/* FIXED TITLE */}
             <h1
-                className={`fixed top-[-100px] left-1/2 -translate-x-1/2
+                className={`fixed top-[] left-1/2 -translate-x-1/2
         z-30 pointer-events-none font-bold text-center
         ${titleSizeClass} ${titleTracking}
         w-[1330px] max-w-[calc(100vw-40px)]
