@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TopBar, InfoLink } from "../../components/shell/TopBar";
-import ImageSphereSketch from "../../components/visuals/ImageSphereSketch";
+import VoyageStickLoop from "../../components/visuals/VoyageStickLoop";
 
 export default function HomePage() {
     return (
@@ -188,6 +188,11 @@ export default function HomePage() {
 
                         {/* Bottom breathing room so the last card isn't stuck to the bottom */}
                         <div className="h-[35vh]" />
+
+                        {/* VOYAGE ANIMATION */}
+                        <div className="mt-[80px] flex justify-center">
+                            <VoyageStickLoop size={860} />
+                        </div>
                     </div>
                 </section>
             </main>
