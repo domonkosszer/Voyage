@@ -76,6 +76,37 @@ export default function AdminPage() {
                             </div>
                         </div>
 
+                        {/* Events Card */}
+                        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
+                            <div>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
+                                    Content
+                                </h3>
+                                <h2 className="text-2xl font-bold text-slate-800">
+                                    Event Management
+                                </h2>
+                                <p className="text-slate-500 mt-2 text-sm leading-relaxed">
+                                    Create, schedule, and publish club events.
+                                </p>
+                            </div>
+
+                            <div className="mt-6 flex flex-col gap-3">
+                                <Link
+                                    href="/admin/events/new"
+                                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition"
+                                >
+                                    + New Event
+                                </Link>
+
+                                <Link
+                                    href="/admin/events"
+                                    className="inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all"
+                                >
+                                    Manage Events →
+                                </Link>
+                            </div>
+                        </div>
+
                         {/* Database Status Card */}
                         <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
                             <div>
