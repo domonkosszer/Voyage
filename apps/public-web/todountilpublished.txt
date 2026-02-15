@@ -1,0 +1,112 @@
+# Create Voyage pre-launch checklist as a TXT file
+import pypandoc
+
+checklist_text = """
+VOYAGE – PRE-LAUNCH CHECKLIST
+==============================
+
+1) CODE STABILITY
+-----------------
+[ ] main branch is clean and deployable
+[ ] No console.logs left
+[ ] No test routes (/test, /draft, etc.)
+[ ] No dummy content
+[ ] No hardcoded localhost URLs
+[ ] .env.local is in .gitignore
+[ ] node_modules not tracked
+[ ] All changes committed
+
+2) PRODUCTION BUILD
+-------------------
+[ ] npm run build succeeds
+[ ] npm start runs without crashes
+[ ] No undefined environment variable errors
+[ ] Blog pages load
+[ ] Admin works (if enabled)
+
+3) SERVER & HOSTING
+--------------------
+[ ] Domain added to Cloudflare
+[ ] Nameservers switched from Hostpoint
+[ ] A records point to correct server IP
+[ ] Subdomains configured (api, www)
+[ ] Cloudflare SSL mode = Full (strict)
+[ ] Nginx origin certificate installed
+[ ] HTTP redirects to HTTPS
+[ ] Ports 80 and 443 open and forwarded
+
+4) NGINX ROUTING
+----------------
+[ ] voyageclub.com → frontend port
+[ ] api.voyageclub.com → backend port
+[ ] nginx -t passes
+[ ] nginx reload successful
+[ ] No redirect loops
+
+5) ENVIRONMENT VARIABLES (PRODUCTION)
+--------------------------------------
+[ ] PUBLIC_WEB_URL set correctly
+[ ] BACKEND_URL set correctly
+[ ] DATABASE_URL set
+[ ] AUTH_SECRET set and stable
+[ ] No localhost values in production
+
+6) BLOG / CONTENT
+-----------------
+[ ] No ENOENT filesystem errors
+[ ] All posts load
+[ ] Broken slug returns proper 404
+[ ] Images load correctly
+[ ] Images optimized
+[ ] Deleting a post does not crash server
+
+7) AUTH & ADMIN
+---------------
+[ ] Login works over HTTPS
+[ ] Logout works
+[ ] Unauthorized access blocked
+[ ] Session survives refresh
+[ ] No redirect to undefined URLs
+
+8) PERFORMANCE
+--------------
+[ ] Lighthouse score 80+
+[ ] No huge images
+[ ] First load acceptable
+[ ] Gzip/Brotli enabled
+
+9) SECURITY
+-----------
+[ ] HTTPS everywhere
+[ ] No exposed .env files
+[ ] Database not publicly accessible
+[ ] Firewall enabled
+[ ] No default passwords
+
+10) SOFT LAUNCH
+---------------
+[ ] Sent to 3–5 trusted testers
+[ ] Tested on iPhone
+[ ] Tested on Android
+[ ] Tested on desktop
+[ ] Feedback collected and fixes applied
+
+READY TO LAUNCH WHEN:
+---------------------
+✔ Stable
+✔ Clean
+✔ Clear
+✔ Minimal
+"""
+
+output_path = "/mnt/data/voyage_prelaunch_checklist.txt"
+
+pypandoc.convert_text(
+    checklist_text,
+    'plain',
+    format='md',
+    outputfile=output_path,
+    extra_args=['--standalone']
+)
+
+output_path

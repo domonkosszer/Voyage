@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { readdir, readFile, rm } from "fs/promises";
+
+export const runtime = "nodejs"; // because you're using fs
 
 function postDir(slug: string) {
     return path.join(process.cwd(), "public", "content", "posts", slug);
@@ -13,22 +15,16 @@ async function latestPostFile(slug: string) {
         .sort()
         .reverse();
 
-    if (!files.length) {
-        throw new Error("No mdx file found");
-    }
-
+    if (!files.length) throw new Error("No mdx file found");
     return path.join(dir, files[0]);
 }
 
-type Ctx = {
-    params: {
-        slug: string;
-    };
-};
-
 // GET /api/blog/[slug] → fetch full post (meta + content)
-export async function GET(_: Request, ctx: Ctx) {
-    const { slug } = ctx.params;
+export async function GET(
+    _req: NextRequest,
+    ctx: RouteContext<"/api/blog/[slug]">
+) {
+    const { slug } = await ctx.params;
 
     try {
         const mdx = await readFile(await latestPostFile(slug), "utf8");
@@ -39,8 +35,11 @@ export async function GET(_: Request, ctx: Ctx) {
 }
 
 // DELETE /api/blog/[slug] → delete post
-export async function DELETE(_: Request, ctx: Ctx) {
-    const { slug } = ctx.params;
+export async function DELETE(
+    _req: NextRequest,
+    ctx: RouteContext<"/api/blog/[slug]">
+) {
+    const { slug } = await ctx.params;
 
     try {
         await rm(postDir(slug), { recursive: true, force: true });
