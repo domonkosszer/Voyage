@@ -32,7 +32,7 @@ checkstyle-idea.xml
 # OS
 # =========================
 .DS_Store
-
+**/.DS_Store
 # =========================
 # Local data / databases
 # =========================
