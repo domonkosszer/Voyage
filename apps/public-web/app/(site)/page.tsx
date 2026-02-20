@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TopBar, InfoLink } from "../../components/shell/TopBar";
+import VoyageStickLoop from "../../components/visuals/VoyageStickLoop";
 
 export default function HomePage() {
     return (
@@ -189,6 +190,11 @@ export default function HomePage() {
                         <div className="h-[35vh]" />
                     </div>
                 </section>
+
+                {/* VOYAGE LOOP ANIMATION */}
+                <div className="mt-[120px] flex justify-center scale-125">
+                    <VoyageStickLoop size={720} />
+                </div>
             </main>
         </>
     );
