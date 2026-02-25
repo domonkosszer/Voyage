@@ -27,7 +27,7 @@ export default function HomePage() {
             </section>
 
             {/* PAGE CONTENT */}
-            <main className="relative mx-auto w-full px-7 overflow-x-hidden">
+            <main className="relative  no-scrollbar mx-auto w-full px-7 overflow-x-hidden">
                 {/* GIANT BACKGROUND HEADLINE (fixed) */}
                 <h2
                     className="
@@ -74,7 +74,7 @@ export default function HomePage() {
                 </div>
 
                 {/* THIS CREATES SCROLL */}
-                <section id="events" className="relative z-0 min-h-[260vh] pt-[110vh] scroll-mt-24">
+                <section id="events" className="relative z-0 min-h-screen pt-[90vh] scroll-mt-24">
                     <div className="relative z-20 mx-auto w-full max-w-5xl">
                         <header className="text-center">
                             <p className="text-[25px] uppercase tracking-[0.25em] opacity-60 translate-y-[80px]" >
@@ -136,7 +136,7 @@ export default function HomePage() {
                 </section>
 
                 {/* VOYAGE LOOP ANIMATION */}
-                <div className="mt-[120px] flex justify-center scale-125">
+                <div className="mt-[-70px] flex justify-center scale-125">
                     <VoyageStickLoop size={720} />
                 </div>
             </main>

@@ -32,3 +32,13 @@
 html, body {
     height: 100%;
 }
+
+/* Hide scrollbar but keep scroll */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE */
+    scrollbar-width: none;     /* Firefox */
+}
