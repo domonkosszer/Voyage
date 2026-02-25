@@ -14,7 +14,8 @@ export default async function BlogIndexPage() {
                 right={<InfoLink href="/about" />}
             />
 
-            <section className="sticky top-[0px] z-30  pt-[10px] pb-[10px] overflow-hidden">
+            <section className="sticky top-[0px] z-30 pt-[10px] pb-[10px] overflow-hidden"
+                style={{background: "white"}}>
                 <div className="mx-auto max-w-6xl overflow-hidden">
                     <div
                         className="flex whitespace-nowrap"
@@ -57,8 +58,8 @@ export default async function BlogIndexPage() {
                 </div>
             </section>
 
-            <main className="mt-[40px] px-[30px] md:px-[10px]">
-                <div className="grid grid-cols-3 gap-x-[10px] gap-y-[0px] mt-[100px]">
+            <main className="mt-[-80px]  p-[30px] md:px-[10px]">
+                <div className="grid grid-cols-3 gap-x-[10px] gap-y-[30px] mt-[100px]">
                     {posts.map((p, index) => (
                         <React.Fragment key={p.slug}>
                             <article className="rounded-2xl bg-neutral-50 overflow-hidden">
@@ -93,6 +94,7 @@ export default async function BlogIndexPage() {
                                 </div>
                             </article>
 
+                            {/*
                             {((index + 1) % 3 === 0) && (
                                 <div className="col-span-3 rounded-2xl px-[30px] pt-[0px] pb-[0px] mt-[-200px] mb-[-180px]">
                                     <div className="flex justify-center">
@@ -104,6 +106,7 @@ export default async function BlogIndexPage() {
                                     </div>
                                 </div>
                             )}
+                                */}
                         </React.Fragment>
                     ))}
                 </div>
