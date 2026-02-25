@@ -1,20 +1,24 @@
 import { TopBar, BackLink } from "../../../components/shell/TopBar";
 import { Instagram, X, Globe } from "lucide-react";
+import Link from "next/link";
 
 export default function AboutPage() {
     return (
         <div>
-            <TopBar title="Info" left={<BackLink href="/" />} />
+            {/* <TopBar title="" left={<BackLink href="/" />} /> */}
 
             {/* Top label */}
-            <div className="fixed top-[20px] left-[0px] right-[0px] z-[20px] text-center">
-                <div className="text-[22px] font-semibold uppercase tracking-[0.35em] opacity-60">
+            <div className="fixed top-[20px] left-[0px] right-[0px] z-[9999] flex justify-center pointer-events-auto">
+                <Link
+                    href="/"
+                    className="inline-block cursor-pointer text-[22px] font-semibold uppercase tracking-[0.35em] opacity-60 hover:opacity-100 transition"
+                >
                     Voyage Sports Club
-                </div>
+                </Link>
             </div>
 
             {/* Main content */}
-            <main className="relative h-screen mx-auto pt-[40px] max-w-3xl px-[16px]">
+            <main className="relative h-screen mx-auto pt-[40px] max-w-3xl px-[16px] pointer-events-none">
                 {/* Trackfield wrapper */}
                 <div className="fixed top-[80px] bottom-[30px] left-[80px] right-[80px] rounded-[140px] border-[4px] border-black/20 pointer-events-none">
                     {/* Lane lines */}
@@ -22,7 +26,7 @@ export default function AboutPage() {
                     <div className="absolute inset-[32px] rounded-[110px] border-[2px] border-black/10" />
                 </div>
                     {/* Content */}
-                    <div className="fixed top-[140px] bottom-[90px] left-[130px] right-[130px] overflow-y-auto no-scrollbar">
+                    <div className="fixed top-[140px] bottom-[90px] left-[130px] right-[130px] overflow-y-auto no-scrollbar pointer-events-auto">
                         <div className="relative z-10 mx-auto mt-[50px] max-w-3xl px-[60px] text-center">
                             <h1 className="mb-[12px] text-[40px] font-semibold tracking-tight">
                             Who Are We?
@@ -58,6 +62,16 @@ export default function AboutPage() {
                                 Runs, rides, sessions, pop-ups, maybe a race, maybe just coffee.
                                 <br />
                                 If something’s happening, it’ll show up here.
+                            </p>
+
+                            <Link href="/blog"
+                                  className="inline-block">
+                                <h2 className="mb-[20px] text-[32px] font-medium tracking-tight">
+                                    Blog
+                                </h2>
+                            </Link>
+                            <p className="mx-auto mb-[64px] max-w-[520px] text-[16px] leading-[1.6] opacity-80">
+                                Stay Up to date. There is more to find out.
                             </p>
 
                             <h2 className="mb-[20px] text-[32px] font-medium tracking-tight">

@@ -8,7 +8,7 @@ export default function HomePage() {
     return (
         <>
             {/* NAVIGATION ONLY */}
-            <TopBar right={<InfoLink href="/about" />} title="" />
+            {/*<TopBar right={<InfoLink href="/about" />} title="" />*/}
 
             {/* BRAND / LOGO */}
             <section className="mt-10 text-center">
@@ -62,8 +62,8 @@ export default function HomePage() {
             text-center
           "
                 >
-                    <p className="opacity-60 mt-[10px] mb-[15px] italic">there is more to find out</p>
-                    <div className="flex items-center justify-center gap-[15px]">
+                    <p className="opacity-60 mt-[10px] mb-[5px] italic">there is more to find out</p>
+                    <div className="flex items-center justify-center gap-[45px] ">
                         <Link className="underline underline-offset-4 " href="/about">
                            About
                         </Link>

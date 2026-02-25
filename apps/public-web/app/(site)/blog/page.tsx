@@ -9,9 +9,13 @@ export default async function BlogIndexPage() {
     return (
         <div>
             <TopBar
-                title="Blog"
-                left={<BackLink href="/" />}
-                right={<InfoLink href="/about" />}
+                title=""
+                right={
+                    <div className="flex gap-[1340px] ">
+                        <BackLink href="/" />
+                        <InfoLink href="/about" />
+                    </div>
+                }
             />
 
             <section className="sticky top-[0px] z-30 pt-[10px] pb-[10px] overflow-hidden"
