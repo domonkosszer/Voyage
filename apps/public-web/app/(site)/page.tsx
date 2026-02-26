@@ -27,7 +27,7 @@ export default function HomePage() {
             </section>
 
             {/* PAGE CONTENT */}
-            <main className="relative  no-scrollbar mx-auto w-full px-7 overflow-x-hidden">
+            <main className="relative no-scrollbar mx-auto w-full px-7 overflow-x-hiddenw">
                 {/* GIANT BACKGROUND HEADLINE (fixed) */}
                 <h2
                     className="
@@ -42,6 +42,7 @@ export default function HomePage() {
             tracking-[0.02em]
             opacity-[0.12]
             text-[clamp(6rem,23vh,14rem)] md:[font-size:clamp(8rem,30vh,26rem)]
+
           "
                 >
           <span className="block">
@@ -60,10 +61,12 @@ export default function HomePage() {
             translate-y-[32vh] md:translate-y-[40vh]
             z-10
             text-center
+            pointer-events-none
+
           "
                 >
                     <p className=" mt-[10px] mb-[5px] tracking-[0.35em] italic opacity-50">there is more to find out</p>
-                    <div className="flex items-center justify-center gap-[45px]  ">
+                    <div className="flex items-center justify-center gap-[45px] pointer-events-auto">
                         <Link
                             href="/about"
                             className="text-[15px] font-semibold tracking-[0.35em] opacity-60"
