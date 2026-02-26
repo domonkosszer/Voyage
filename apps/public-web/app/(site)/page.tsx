@@ -15,11 +15,11 @@ export default function HomePage() {
                 <h1
                     className="
             font-bold leading-none
-            mx-auto w-full max-w-[95vw]
+            mx-auto w-full max-w-full
             translate-y-[1px]
             whitespace-nowrap
-            [font-size:clamp(4rem,10vw,10rem)]
-            tracking-[0.6em]
+            text-[clamp(3rem,9vw,7rem)] md:text-[clamp(6rem,11vw,11rem)]
+            tracking-[0.4em] md:tracking-[0.6em]
           "
                 >
                     VOYAGE
@@ -41,7 +41,7 @@ export default function HomePage() {
             leading-[0.82]
             tracking-[0.02em]
             opacity-[0.12]
-            [font-size:clamp(8rem,30vh,26rem)]
+            text-[clamp(6rem,23vh,14rem)] md:[font-size:clamp(8rem,30vh,26rem)]
           "
                 >
           <span className="block">
@@ -57,7 +57,7 @@ export default function HomePage() {
            fixed
             top-1/2 left-1/2
             -translate-x-1/2
-            translate-y-[40vh]
+            translate-y-[32vh] md:translate-y-[40vh]
             z-10
             text-center
           "
