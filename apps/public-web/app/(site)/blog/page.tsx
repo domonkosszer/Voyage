@@ -10,32 +10,27 @@ export default async function BlogIndexPage() {
         <div>
             <TopBar
                 title=""
-                right={
-                    <div className="flex gap-[1340px] ">
-                        <BackLink href="/" />
-                        <InfoLink href="/about" />
-                    </div>
-                }
+                left={<BackLink href="/" />}
+                right={<InfoLink href="/about" />}
             />
 
-            <section className="sticky top-[0px] z-30 pt-[10px] pb-[10px] overflow-hidden"
-                style={{background: "white"}}>
-                <div className="mx-auto max-w-6xl overflow-hidden">
+            <section className="fixed top-0 left-0 w-full z-40 pt-[45px] pb-[15px] bg-white overflow-hidden">
+                <div className="w-full overflow-hidden">
                     <div
                         className="flex whitespace-nowrap"
                         style={{ animation: "marquee-right 45s linear infinite" }}
                     >
-                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
+                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-black">
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG ·
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG ·
                             BLOG · BLOG · BLOG
                         </h1>
-                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
+                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-black">
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG ·
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG ·
                             BLOG · BLOG · BLOG
                         </h1>
-                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-gray-500">
+                        <h1 className="text-[80px] font-semibold tracking-widest leading-tight mr-20 text-black">
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG ·
                             BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG · BLOG ·
                             BLOG · BLOG · BLOG
@@ -43,7 +38,7 @@ export default async function BlogIndexPage() {
                     </div>
 
                     <div
-                        className="flex whitespace-nowrap w-max mt-[-30px]"
+                        className="flex whitespace-nowrap w-max mt-[-20px]"
                         style={{ animation: "marquee 40s linear infinite" }}
                     >
                         <p className="text-[30px] opacity-60 tracking-[0.05em] mr-20">
@@ -62,8 +57,8 @@ export default async function BlogIndexPage() {
                 </div>
             </section>
 
-            <main className="mt-[-80px]  p-[30px] md:px-[10px]">
-                <div className="grid grid-cols-3 gap-x-[10px] gap-y-[30px] mt-[100px]">
+            <main className="pt-[120px] px-[16px] md:px-[4px]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-[16px] gap-y-[60px] mt-[100px]">
                     {posts.map((p, index) => (
                         <React.Fragment key={p.slug}>
                             <article className="rounded-2xl bg-neutral-50 overflow-hidden">

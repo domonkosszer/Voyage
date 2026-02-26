@@ -20,10 +20,10 @@ export default function AboutPage() {
             {/* Main content */}
             <main className="relative h-screen mx-auto pt-[40px] max-w-3xl px-[16px] pointer-events-none">
                 {/* Trackfield wrapper */}
-                <div className="fixed top-[80px] bottom-[30px] left-[80px] right-[80px] rounded-[140px] border-[4px] border-black/20 pointer-events-none">
+                <div className="fixed top-[80px] bottom-[30px] left-[80px] right-[80px] rounded-[140px] border-[4px] border-black/90 pointer-events-none">
                     {/* Lane lines */}
-                    <div className="absolute inset-[14px] rounded-[128px] border-[3px] border-black/12" />
-                    <div className="absolute inset-[32px] rounded-[110px] border-[2px] border-black/10" />
+                    <div className="absolute inset-[14px] rounded-[128px] border-[3px] border-black/30" />
+                    <div className="absolute inset-[32px] rounded-[110px] border-[2px] border-black/5" />
                 </div>
                     {/* Content */}
                     <div className="fixed top-[140px] bottom-[90px] left-[130px] right-[130px] overflow-y-auto no-scrollbar pointer-events-auto">

@@ -62,13 +62,19 @@ export default function HomePage() {
             text-center
           "
                 >
-                    <p className="opacity-60 mt-[10px] mb-[5px] italic">there is more to find out</p>
-                    <div className="flex items-center justify-center gap-[45px] ">
-                        <Link className="underline underline-offset-4 " href="/about">
-                           About
+                    <p className=" mt-[10px] mb-[5px] tracking-[0.35em] italic opacity-50">there is more to find out</p>
+                    <div className="flex items-center justify-center gap-[45px]  ">
+                        <Link
+                            href="/about"
+                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60"
+                        >
+                            about
                         </Link>
-                        <Link className="underline underline-offset-4" href="/blog">
-                            Blog
+                        <Link
+                            href="/blog"
+                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60"
+                        >
+                            blog
                         </Link>
                     </div>
                 </div>
