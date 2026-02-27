@@ -60,7 +60,7 @@ export default function VoyageStickLoop({
                     <circle cx="0" cy="-70" r="0.2">
                         <animate
                             attributeName="cy"
-                            values="-95;0;95;0;-95"
+                            values="-85;0;95;0;-85"
                             dur="8s"
                             repeatCount="indefinite"
                         />

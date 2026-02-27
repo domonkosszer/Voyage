@@ -145,13 +145,13 @@ export default function HomePage() {
                         </div>
 
                         {/* Bottom breathing room so the last card isn't stuck to the bottom */}
-                        <div className="h-[35vh]" />
+                        <div className="h-[50vh] md:h-[15vh]" />
                     </div>
                 </section>
 
                 {/* VOYAGE LOOP ANIMATION */}
-                <div className="flex justify-center mt-[-100px] md:mt-[-40px] scale-150 md:scale-125">
-                    <VoyageStickLoop size={720} />
+                <div className="absolute bottom-[-90vh] md:bottom-[-80vh] left-1/2 -translate-x-1/2 -translate-y-[140px] md:-translate-y-[60px] flex justify-center scale-110 md:scale-195">
+                    <VoyageStickLoop size={520} />
                 </div>
             </main>
         </div>
