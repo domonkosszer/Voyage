@@ -30,6 +30,15 @@
 /* Minimal default to keep things clean */
 html, body {
     height: 100%;
+    overflow-x:hidden;
+}
+
+/* nur Mobile / Touch-Geräte */
+@media (hover: none) and (pointer: coarse) {
+    html, body {
+        overscroll-behavior-y: none;
+        overflow-x:hidden;
+    }
 }
 
 /* Hide scrollbar but keep scroll */

@@ -6,7 +6,7 @@ import { listEvents } from "@/lib/events/store.file";
 export default function HomePage() {
     const events = listEvents();
     return (
-        <>
+        <div className="px-7">
             {/* NAVIGATION ONLY */}
             {/*<TopBar right={<InfoLink href="/about" />} title="" />*/}
 
@@ -19,7 +19,7 @@ export default function HomePage() {
             translate-y-[1px]
             whitespace-nowrap
             text-[clamp(3rem,9vw,7rem)] md:text-[clamp(6rem,11vw,11rem)]
-            tracking-[0.4em] md:tracking-[0.6em]
+            tracking-[0.4em] md:tracking-[0.6em] md:translate-x-[0.17em]
           "
                 >
                     VOYAGE
@@ -27,7 +27,7 @@ export default function HomePage() {
             </section>
 
             {/* PAGE CONTENT */}
-            <main className="relative no-scrollbar mx-auto w-full px-7 overflow-x-hiddenw">
+            <main className="relative no-scrollbar mx-auto w-full ">
                 {/* GIANT BACKGROUND HEADLINE (fixed) */}
                 <h2
                     className="
@@ -83,7 +83,7 @@ export default function HomePage() {
                 </div>
 
                 {/* THIS CREATES SCROLL */}
-                <section id="events" className="relative z-0 min-h-screen pt-[90vh] scroll-mt-24">
+                <section id="events" className="relative z-20 min-h-[100svh] pt-[90svh] scroll-mt-24">
                     <div className="relative z-20 mx-auto w-full max-w-5xl">
                         <header className="text-center">
                             <p className="text-[25px] uppercase tracking-[0.25em] opacity-60 translate-y-[80px]" >
@@ -145,10 +145,10 @@ export default function HomePage() {
                 </section>
 
                 {/* VOYAGE LOOP ANIMATION */}
-                <div className="mt-[-70px] flex justify-center scale-125">
+                <div className="flex justify-center mt-[-100px] md:mt-[-40px] scale-150 md:scale-125">
                     <VoyageStickLoop size={720} />
                 </div>
             </main>
-        </>
+        </div>
     );
 }
