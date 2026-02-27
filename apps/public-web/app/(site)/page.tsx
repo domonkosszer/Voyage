@@ -61,7 +61,6 @@ export default function HomePage() {
             translate-y-[32vh] md:translate-y-[40vh]
             z-10
             text-center
-            pointer-events-none
 
           "
                 >
@@ -69,13 +68,19 @@ export default function HomePage() {
                     <div className="flex items-center justify-center gap-[45px] pointer-events-auto">
                         <Link
                             href="/about"
-                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60"
+                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60 hover:opacity-100 transition"
                         >
                             about
                         </Link>
                         <Link
+                            href="/collection/drop-01"
+                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60 hover:opacity-100 transition"
+                        >
+                            collection
+                        </Link>
+                        <Link
                             href="/blog"
-                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60"
+                            className="text-[15px] font-semibold tracking-[0.35em] opacity-60 hover:opacity-100 transition"
                         >
                             blog
                         </Link>
