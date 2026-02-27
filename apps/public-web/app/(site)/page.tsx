@@ -83,8 +83,8 @@ export default function HomePage() {
                 </div>
 
                 {/* THIS CREATES SCROLL */}
-                <section id="events" className="relative z-20 min-h-[100svh] pt-[90svh] scroll-mt-24">
-                    <div className="relative z-20 mx-auto w-full max-w-5xl">
+                <section id="events" className="relative z-0 min-h-[100svh] pt-[90svh] scroll-mt-24">
+                    <div className="relative z-0 mx-auto w-full max-w-5xl">
                         <header className="text-center">
                             <p className="text-[25px] uppercase tracking-[0.25em] opacity-60 translate-y-[80px]" >
                                 Voyage Sports Club
