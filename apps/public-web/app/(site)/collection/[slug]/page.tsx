@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getCollection, listCollections } from "@/lib/collections";
+import { TopBar, BackLink } from "@/components/shell/TopBar";
 
 export function generateStaticParams() {
     return listCollections().map((c) => ({ slug: c.slug }));
@@ -17,8 +18,13 @@ export default async function CollectionPage({
     if (!collection) return notFound();
 
     return (
-        <main className="px-7 py-10">
-            <h1 className="text-3xl font-semibold tracking-[0.2em]">
+        <>
+            <TopBar
+                title=""
+                left={<BackLink href="/" />}
+            />
+            <main className="px-7 py-10 pt-24 overflow-y-auto ">
+            <h1 className=" text-2xl md:text-3xl font-semibold tracking-[0.15em]  md:tracking-[0.2em]">
                 {collection.title}
             </h1>
 
@@ -44,5 +50,6 @@ export default async function CollectionPage({
                 ))}
             </div>
         </main>
+        </>
     );
 }
