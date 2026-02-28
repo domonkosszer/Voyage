@@ -81,7 +81,7 @@ export default function AboutPage() {
                             {/* Social icons */}
                             <div className="flex justify-center gap-[24px]">
                                 <a
-                                    href="https://instagram.com"
+                                    href="https://www.instagram.com/voyagesportsclub?igsh=ZHB4dWtsYzZqbW9m&utm_source=qr"
                                     target="_blank"
                                     rel="noreferrer"
                                     aria-label="Instagram"
