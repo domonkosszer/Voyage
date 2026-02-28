@@ -49,6 +49,40 @@ export default async function CollectionPage({
                     </div>
                 ))}
             </div>
+
+            {/* EDITORIAL SECTION */}
+            {collection.editorial && (
+                <section className="mt-16 space-y-8">
+                    <div>
+                        <h2 className="text-xl md:text-2xl font-semibold">
+                            {collection.editorial.headline}
+                        </h2>
+                        <p className="mt-4 opacity-70 max-w-2xl">
+                            {collection.editorial.copy}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-black/5">
+                            <Image
+                                src={collection.editorial.imageA}
+                                alt={collection.editorial.headline}
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+
+                        <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-black/5">
+                            <Image
+                                src={collection.editorial.imageB}
+                                alt={collection.editorial.headline}
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                    </div>
+                </section>
+            )}
         </main>
         </>
     );
