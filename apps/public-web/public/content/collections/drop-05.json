@@ -1,0 +1,24 @@
+{
+  "slug": "drop-05",
+  "title": "test",
+  "subtitle": "",
+  "heroImage": "",
+  "intro": "",
+  "products": [
+    {
+      "id": "p1",
+      "slug": "drop-05-product",
+      "name": "test",
+      "priceCHF": 0,
+      "image1": "",
+      "image2": "",
+      "badge": ""
+    }
+  ],
+  "editorial": {
+    "headline": "",
+    "copy": "",
+    "imageA": "",
+    "imageB": ""
+  }
+}
