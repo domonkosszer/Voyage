@@ -2,15 +2,9 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getCollection } from "@/lib/collections";
 import { TopBar, BackLink } from "@/components/shell/TopBar";
+import ProductCard from "@/components/commerce/ProductCard";
 
-
-export const dynamic = "force-dynamic";
-
-export default async function CollectionPage({
-                                                 params,
-                                             }: {
-    params: Promise<{ slug: string }>;
-}) {
+export default async function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
     const collection = getCollection(slug);
@@ -44,43 +38,7 @@ export default async function CollectionPage({
 
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-12">
                 {collection.products.map((product) => (
-                    <div key={product.id} className="space-y-4">
-
-                        {/* PRODUCT IMAGES */}
-                        <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-black/5 group cursor-pointer">
-                            {product.image1 && (
-                                <Image
-                                    src={product.image1}
-                                    alt={product.name}
-                                    fill
-                                    unoptimized
-                                    className="object-cover transition-all duration-700 ease-in-out group-hover:scale-105 group-hover:opacity-0"
-                                />
-                            )}
-
-                            {product.image2 && (
-                                <Image
-                                    src={product.image2}
-                                    alt={product.name}
-                                    fill
-                                    unoptimized
-                                    className="object-cover opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 group-hover:scale-102"
-                                />
-                            )}
-
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-700" />
-
-                            <div className="absolute bottom-6 left-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                <p className="text-sm tracking-[0.3em] uppercase">{product.badge || "Voyage"}</p>
-                            </div>
-                        </div>
-
-                        {/* PRODUCT INFO */}
-                        <div>
-                            <p className="font-medium">{product.name}</p>
-                            <p className="opacity-60">CHF {product.priceCHF}</p>
-                        </div>
-                    </div>
+                    <ProductCard key={product.id} product={product} />
                 ))}
             </div>
 
