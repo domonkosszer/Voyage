@@ -43,14 +43,19 @@ export async function POST(req: Request) {
                 }
             ],
             editorial: {
-                headline: editorialHeadline ?? "",
-                copy: editorialCopy ?? "",
+                headline: "",
+                copy: "",
                 imageA: "",
                 imageB: ""
             }
         };
 
-        const dir = path.join(process.cwd(), "public", "content", "collections");
+        const dir = path.join(
+          process.cwd(),
+          "public",
+          "content",
+          "collections"
+        );
 
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });

@@ -44,6 +44,9 @@ export default async function AdminLayout({
                     <a href="/admin/posts" className="block">
                         Manage posts
                     </a>
+                    <a href="/admin/collections" className="block">
+                        Manage collections
+                    </a>
                 </nav>
             </aside>
 

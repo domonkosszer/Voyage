@@ -2,7 +2,7 @@
   "slug": "drop-01",
   "title": "DROP 01 — ARRIVAL",
   "subtitle": "The beginning of the Voyage.",
-  "heroImage": "/images/collections/drop-01/hero.jpg",
+  "heroImage": "/media/collections/drop-01/hero.webp",
   "intro": "Drop 01 explores movement, identity, and direction — designed in Switzerland, built for everywhere.",
   "products": [
     {
@@ -10,15 +10,15 @@
       "slug": "voyage-heavyweight-tee",
       "name": "Voyage Heavyweight Tee",
       "priceCHF": 59,
-      "image1": "/images/products/tee-1.jpg",
-      "image2": "/images/products/tee-2.jpg",
+      "image1": "/media/collections/drop-01/products/product-1-1.webp",
+      "image2": "/media/collections/drop-01/products/product-1-2.webp",
       "badge": "Limited"
     }
   ],
   "editorial": {
     "headline": "Built with purpose.",
     "copy": "Every piece is designed with precision and restraint.",
-    "imageA": "/images/collections/drop-01/editorial-1.jpg",
-    "imageB": "/images/collections/drop-01/editorial-2.jpg"
+    "imageA": "/media/collections/drop-01/editorial-a.webp",
+    "imageB": "/media/collections/drop-01/editorial-b.webp"
   }
 }
