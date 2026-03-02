@@ -88,7 +88,7 @@ export default function HomePage() {
                 </div>
 
                 {/* THIS CREATES SCROLL */}
-                <section id="events" className="relative z-0 min-h-[100svh] pt-[90svh] scroll-mt-24">
+                <section id="events" className="relative z-0 pt-[90svh] md:pt-[90svh] scroll-mt-24 flex flex-col">
                     <div className="relative z-0 mx-auto w-full max-w-5xl">
                         <header className="text-center">
                             <p className="text-[25px] uppercase tracking-[0.25em] opacity-60 translate-y-[80px]" >
@@ -145,14 +145,21 @@ export default function HomePage() {
                         </div>
 
                         {/* Bottom breathing room so the last card isn't stuck to the bottom */}
-                        <div className="h-[50vh] md:h-[15vh]" />
-                    </div>
-                </section>
 
-                {/* VOYAGE LOOP ANIMATION */}
-                <div className="absolute bottom-[-90vh] md:bottom-[-80vh] left-1/2 -translate-x-1/2 -translate-y-[140px] md:-translate-y-[60px] flex justify-center scale-110 md:scale-195">
-                    <VoyageStickLoop size={520} />
-                </div>
+
+                    </div>
+
+                    {/* VOYAGE LOOP ANIMATION */}
+                    <div className="
+    mt-[25vh] md:mt-[25vh]
+    mb-[10px] md:mb-[15vh]
+    flex justify-center
+    scale-210 md:scale-195
+">
+                        <VoyageStickLoop size={520} />
+                    </div>
+
+                </section>
             </main>
         </div>
     );

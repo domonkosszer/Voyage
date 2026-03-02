@@ -1,5 +1,5 @@
 import { TopBar, BackLink } from "../../../components/shell/TopBar";
-import { Instagram, X, Globe } from "lucide-react";
+import { Instagram, Youtube, Globe } from "lucide-react";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -26,14 +26,14 @@ export default function AboutPage() {
                     <div className="absolute inset-[32px] rounded-[110px] border-[2px] border-black/5" />
                 </div>
                     {/* Content */}
-                    <div className="fixed top-[110px] bottom-[90px] left-[30px] right-[30px] md:left-[130px] md:right-[130px] overflow-y-auto no-scrollbar pointer-events-auto">
+                    <div className="fixed top-[135px] bottom-[90px] left-[30px] right-[30px] md:left-[130px] md:right-[130px] overflow-y-auto no-scrollbar pointer-events-auto">
                         <div className="relative z-10 mx-auto mt-[50px] max-w-3xl px-[60px] text-center">
                             <h1 className="mb-[12px] text-[35px] md:text-[40px] font-bold tracking-tight">
                             Who Are We?
                         </h1>
 
                             <p className="mx-auto mb-[64px] max-w-[520px] text-[16px] leading-[1.6] opacity-80">
-                                We’re a community for sport, outdoors and good energy — building sessions, events and stories.
+                                We’re a community built around sport, the outdoors and good energy — creating sessions, events and stories.
                             </p>
 
                             <h2 className="mb-[12px] text-[28px] md:text-[32px] font-medium tracking-tight">
@@ -91,13 +91,13 @@ export default function AboutPage() {
                                 </a>
 
                                 <a
-                                    href="https://twitter.com"
+                                    href="https://www.youtube.com"
                                     target="_blank"
                                     rel="noreferrer"
-                                    aria-label="X / Twitter"
+                                    aria-label="YouTube"
                                     className="flex h-[56px] w-[56px] items-center justify-center rounded-full border-[2px] border-black/25 opacity-80 transition hover:opacity-100 hover:border-black/40 hover:bg-black/5"
                                 >
-                                    <X size={24} strokeWidth={1.75} />
+                                    <Youtube size={24} strokeWidth={1.75} />
                                 </a>
 
                                 <a
