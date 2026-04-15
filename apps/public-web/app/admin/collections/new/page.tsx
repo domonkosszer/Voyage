@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function NewCollectionPage() {
@@ -13,11 +13,26 @@ export default function NewCollectionPage() {
         intro: ""
     });
 
+    const [images, setImages] = useState<File[]>([]);
+    const [loading, setLoading] = useState(false);
+
     function handleChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) {
         setForm({ ...form, [e.target.name]: e.target.value });
     }
+
+    function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+        if (!e.target.files) return;
+        setImages(Array.from(e.target.files));
+    }
+
+    const previews = useMemo(() => {
+        return images.map((file) => ({
+            file,
+            url: URL.createObjectURL(file)
+        }));
+    }, [images]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -28,22 +43,36 @@ export default function NewCollectionPage() {
         }
 
         const normalizedSlug = form.slug.trim().toLowerCase();
+        setLoading(true);
 
-        const res = await fetch("/api/admin/collections/create", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                ...form,
-                slug: normalizedSlug
-            }),
-        });
+        try {
+            const formData = new FormData();
+            formData.append("slug", normalizedSlug);
+            formData.append("title", form.title);
+            formData.append("subtitle", form.subtitle);
+            formData.append("intro", form.intro);
 
-        const data = await res.json();
+            images.forEach((image) => {
+                formData.append("images", image);
+            });
 
-        if (res.ok) {
-            router.push(`/admin/collections/${normalizedSlug}/edit`);
-        } else {
-            alert(data.error || "Failed to create collection");
+            const res = await fetch("/api/admin/collections/create", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                router.push(`/admin/collections/${normalizedSlug}/edit`);
+            } else {
+                alert(data.error || "Failed to create collection");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -54,7 +83,6 @@ export default function NewCollectionPage() {
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Basic Info */}
                 <div className="bg-white p-8 rounded-2xl border border-slate-200 space-y-6">
                     <h2 className="text-xl font-bold">Basic Information</h2>
 
@@ -95,11 +123,41 @@ export default function NewCollectionPage() {
                     />
                 </div>
 
+                <div className="bg-white p-8 rounded-2xl border border-slate-200 space-y-6">
+                    <h2 className="text-xl font-bold">Collection Pictures</h2>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                        className="border p-3 rounded-lg w-full"
+                    />
+
+                    {previews.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {previews.map((preview, index) => (
+                                <div
+                                    key={`${preview.file.name}-${index}`}
+                                    className="border rounded-xl overflow-hidden"
+                                >
+                                    <img
+                                        src={preview.url}
+                                        alt={preview.file.name}
+                                        className="w-full h-40 object-cover"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 <button
                     type="submit"
-                    className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition"
+                    disabled={loading}
+                    className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition disabled:opacity-50"
                 >
-                    Create Collection
+                    {loading ? "Creating..." : "Create Collection"}
                 </button>
             </form>
         </div>

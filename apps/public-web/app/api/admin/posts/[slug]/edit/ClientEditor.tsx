@@ -114,7 +114,6 @@ export default function ClientEditor({ slug }: { slug: string }) {
                         Preview öffnen
                     </a>
 
-                    {/* ✅ DELETE BUTTON */}
                     <button
                         onClick={deletePost}
                         disabled={deleting}

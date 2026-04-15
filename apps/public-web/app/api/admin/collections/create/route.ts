@@ -2,21 +2,30 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+function sanitizeFileName(fileName: string) {
+    return fileName
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9._-]/g, "");
+}
+
 export async function POST(req: Request) {
     try {
+        const formData = await req.formData();
 
-        const body = await req.json();
-        console.log(body);
-        const {
-            slug,
-            title,
-            subtitle,
-            intro,
-            heroImage,
-            editorialHeadline,
-            editorialCopy,
-            priceCHF
-        } = body;
+        const slug = String(formData.get("slug") ?? "")
+            .trim()
+            .toLowerCase();
+        const title = String(formData.get("title") ?? "").trim();
+        const subtitle = String(formData.get("subtitle") ?? "").trim();
+        const intro = String(formData.get("intro") ?? "").trim();
+        const editorialHeadline = String(
+            formData.get("editorialHeadline") ?? ""
+        ).trim();
+        const editorialCopy = String(
+            formData.get("editorialCopy") ?? ""
+        ).trim();
+        const priceCHF = Number(formData.get("priceCHF") ?? 0) || 0;
 
         if (!slug || !title) {
             return NextResponse.json(
@@ -25,36 +34,11 @@ export async function POST(req: Request) {
             );
         }
 
-        const collectionData = {
-            slug,
-            title,
-            subtitle: subtitle ?? "",
-            heroImage: heroImage ?? "",
-            intro: intro ?? "",
-            products: [
-                {
-                    id: "p1",
-                    slug: `${slug}-product`,
-                    name: title,
-                    priceCHF: Number(priceCHF) || 0,
-                    image1: "",
-                    image2: "",
-                    badge: ""
-                }
-            ],
-            editorial: {
-                headline: "",
-                copy: "",
-                imageA: "",
-                imageB: ""
-            }
-        };
-
         const dir = path.join(
-          process.cwd(),
-          "public",
-          "content",
-          "collections"
+            process.cwd(),
+            "public",
+            "content",
+            "collections"
         );
 
         if (!fs.existsSync(dir)) {
@@ -70,10 +54,69 @@ export async function POST(req: Request) {
             );
         }
 
+        const uploadDir = path.join(
+            process.cwd(),
+            "public",
+            "uploads",
+            "collections",
+            slug
+        );
+
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        const uploadedFiles = formData
+            .getAll("images")
+            .filter((value): value is File => value instanceof File && value.size > 0);
+
+        const imagePaths: string[] = [];
+
+        for (const file of uploadedFiles) {
+            const ext = path.extname(file.name) || ".jpg";
+            const baseName = path.basename(file.name, ext);
+            const safeFileName = `${sanitizeFileName(baseName) || "image"}-${Date.now()}${ext.toLowerCase()}`;
+            const outputPath = path.join(uploadDir, safeFileName);
+
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            fs.writeFileSync(outputPath, buffer);
+            imagePaths.push(`/uploads/collections/${slug}/${safeFileName}`);
+        }
+
+        const collectionData = {
+            slug,
+            title,
+            subtitle,
+            heroImage: imagePaths[0] ?? "",
+            intro,
+            images: imagePaths,
+            products: [
+                {
+                    id: "p1",
+                    slug: `${slug}-product`,
+                    name: title,
+                    priceCHF,
+                    image1: imagePaths[0] ?? "",
+                    image2: imagePaths[1] ?? "",
+                    badge: ""
+                }
+            ],
+            editorial: {
+                headline: editorialHeadline,
+                copy: editorialCopy,
+                imageA: "",
+                imageB: ""
+            }
+        };
+
         fs.writeFileSync(filePath, JSON.stringify(collectionData, null, 2));
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ success: true, images: imagePaths });
     } catch (error) {
+        console.error(error);
+
         return NextResponse.json(
             { error: "Failed to create collection" },
             { status: 500 }
