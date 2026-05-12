@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import TiptapEditor from "@/components/editor/TiptapEditor";
 
 export default function ClientEditor({ slug }: { slug: string }) {
     const router = useRouter();
@@ -89,11 +90,9 @@ export default function ClientEditor({ slug }: { slug: string }) {
             </h1>
 
             <div className="grid gap-[12px]">
-                <textarea
+                <TiptapEditor
                     value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    className="w-full min-h-[520px] font-mono border rounded p-[12px]"
-                    spellCheck={false}
+                    onChange={setBody}
                 />
 
                 <div className="flex gap-[12px]">

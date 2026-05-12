@@ -54,7 +54,9 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </p>
 
                 <div className="pt-[0px] sm:pt-[20px] prose prose-neutral max-w-none break-words sm:prose-base lg:prose-lg">
-                    <MDXRemote source={content} />
+                    <div
+                        dangerouslySetInnerHTML={{ __html: content }}
+                    />
                 </div>
             </article>
         </>

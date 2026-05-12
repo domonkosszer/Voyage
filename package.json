@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "@tiptap/extension-color": "^3.23.1",
+    "@tiptap/extension-text-align": "^3.23.1",
+    "@tiptap/extension-text-style": "^3.23.1",
+    "@tiptap/react": "^3.23.1",
+    "@tiptap/starter-kit": "^3.23.1",
     "lucide-react": "^0.563.0",
     "sharp": "^0.34.5"
   },
