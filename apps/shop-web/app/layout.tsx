@@ -1,51 +1,31 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
 import "./globals.css";
 
-const displayFont = Anton({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display",
-  display: "swap",
-});
-
-const bodyFont = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "FORMA — Built for Performance",
+  title: "VOYAGE — L'Olympionique · for the few.",
   description:
-    "Premium Sportswear für Athleten, die Leistung zum Lifestyle machen. Entdecke die FORMA Kollektion für Men, Women, Performance & Lifestyle.",
-  keywords: [
-    "Sportwear",
-    "Premium Activewear",
-    "Performance Bekleidung",
-    "Fitness Mode",
-  ],
+    "Small-batch sportswear for those who train alone. The Voyage Sports Club tee and the L'Olympionique line — made in considered numbers, for the few.",
   openGraph: {
-    title: "FORMA — Built for Performance",
-    description:
-      "Premium Sportswear für Athleten, die Leistung zum Lifestyle machen.",
+    title: "VOYAGE — for the few.",
+    description: "Small-batch sportswear, made in considered numbers.",
     type: "website",
-    locale: "de_DE",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="de">
-      <body
-        className={`${displayFont.variable} ${bodyFont.variable} font-body antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

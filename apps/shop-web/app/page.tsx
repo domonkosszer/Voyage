@@ -1,10 +1,9 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
+import Manifesto from "@/components/Manifesto";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import BrandStory from "@/components/BrandStory";
-import Categories from "@/components/Categories";
-import Testimonials from "@/components/Testimonials";
+import Editorial from "@/components/Editorial";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 
@@ -13,11 +12,10 @@ export default function Home() {
     <main>
       <Header />
       <Hero />
-      <Marquee />
+      <Manifesto />
       <FeaturedProducts />
       <BrandStory />
-      <Categories />
-      <Testimonials />
+      <Editorial />
       <Newsletter />
       <Footer />
     </main>
