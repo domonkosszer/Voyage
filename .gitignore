@@ -22,6 +22,9 @@ pnpm-debug.log*
 # Assets / Uploads
 public/blog/visuals/
 
+# TypeScript / build info
+*.tsbuildinfo
+
 # OS
 .DS_Store
 **/.DS_Store
