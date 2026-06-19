@@ -1,8 +1,9 @@
 import type { Product } from "@/lib/data";
+import BuyButton from "./BuyButton";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <a className="card" href="#">
+    <div className="card">
       <div className="frame">
         {product.tag && <span className="tag">{product.tag}</span>}
         <img className="a" src={product.image} alt={`${product.name}, back`} />
@@ -11,7 +12,7 @@ export default function ProductCard({ product }: { product: Product }) {
           src={product.imageHover}
           alt={`${product.name}, front`}
         />
-        <div className="add">Add to bag</div>
+        <BuyButton id={product.id} />
       </div>
       <div className="meta">
         <div>
@@ -25,6 +26,6 @@ export default function ProductCard({ product }: { product: Product }) {
           <i key={s} className={`sw-${s}`} title={s} />
         ))}
       </div>
-    </a>
+    </div>
   );
 }
