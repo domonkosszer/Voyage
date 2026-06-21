@@ -1,0 +1,24 @@
+{
+  "slug": "drop-77",
+  "title": "f",
+  "subtitle": "f",
+  "heroImage": "",
+  "intro": "f",
+  "products": [
+    {
+      "id": "p1",
+      "slug": "drop-77-product",
+      "name": "f",
+      "priceCHF": 0,
+      "image1": "",
+      "image2": "",
+      "badge": ""
+    }
+  ],
+  "editorial": {
+    "headline": "",
+    "copy": "",
+    "imageA": "",
+    "imageB": ""
+  }
+}

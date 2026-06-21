@@ -1,21 +1,11 @@
-import { TopBar, BackLink } from "../../../components/shell/TopBar";
+import { SiteNav } from "../../../components/shell/SiteNav";
 import { Instagram, Youtube, Globe } from "lucide-react";
 import Link from "next/link";
 
 export default function AboutPage() {
     return (
         <div>
-            {/* <TopBar title="" left={<BackLink href="/" />} /> */}
-
-            {/* Top label */}
-            <div className="fixed top-[20px] left-[0px] right-[0px] z-[9999] flex justify-center pointer-events-auto">
-                <Link
-                    href="/"
-                    className="inline-block cursor-pointer text-[22px] font-semibold uppercase tracking-[0.35em] opacity-60 hover:opacity-100 transition"
-                >
-                    Voyage Sports Club
-                </Link>
-            </div>
+            <SiteNav />
 
             {/* Main content */}
             <main className="relative h-screen mx-auto pt-[40px] max-w-3xl px-[16px] pointer-events-none">

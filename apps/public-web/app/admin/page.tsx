@@ -1,177 +1,123 @@
 import Link from "next/link";
 
 export default function AdminPage() {
-    const backend = process.env.BACKEND_URL ?? "http://localhost:8080";
+    const backend = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+
+    const sections = [
+        {
+            eyebrow: "Content",
+            title: "Posts",
+            copy: "Write, review and edit Voyage blog posts.",
+            newHref: "/admin/posts/new",
+            newLabel: "+ New post",
+            manageHref: "/admin/posts",
+        },
+        {
+            eyebrow: "Content",
+            title: "Events",
+            copy: "Schedule and publish club events.",
+            newHref: "/admin/events/new",
+            newLabel: "+ New event",
+            manageHref: "/admin/events",
+        },
+        {
+            eyebrow: "Commerce",
+            title: "Collections",
+            copy: "Manage product drops and collections.",
+            newHref: "/admin/collections/new",
+            newLabel: "+ New collection",
+            manageHref: "/admin/collections",
+        },
+    ];
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] flex gap-10 p-8 font-sans text-slate-900">
-            {/* 1. SINGLE CLEAN SIDEBAR */}
-            <aside className="w-64 bg-white border border-slate-200 rounded-2xl flex flex-col sticky top-8 h-[calc(100vh-4rem)]">
-                <div className="p-8 mb-4">
-                    <div className="text-2xl font-black tracking-tighter text-indigo-600"></div>
+        <div className="mx-auto w-full max-w-5xl">
+            {/* Header */}
+            <header className="mb-10">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                    Dashboard
+                </p>
+                <h1 className="mt-2 text-5xl font-black tracking-tight md:text-6xl">
+                    VOYAGE <span className="text-slate-300">OFFICE</span>
+                </h1>
+                <div className="mt-4 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                    <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400">
+                        Connected · {backend}
+                    </p>
                 </div>
+            </header>
 
-                <div className="flex-1" />
-
-                {/* SINGLE LOGOUT AT BOTTOM */}
-                <div className="p-4 border-t border-slate-100">
-                    <form action={`${backend}/logout`} method="post">
-                        <button className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-lg text-sm font-bold uppercase tracking-wider">
-                            ⏻ Logout
-                        </button>
-                    </form>
-                </div>
-            </aside>
-
-            {/* 2. MAIN CONTENT AREA */}
-            <main className="flex-1 flex flex-col min-w-0 pt-24">                {/* FAT VOYAGE HEADER */}
-
-                <header className="px-12 py-10 bg-white border-b border-slate-200 rounded-2xl">                    <div className="max-w-5xl">
-                        <Link href="/" className="inline-block">
-                            <h1 className="text-8xl md:text-9xl font-[1000] tracking-tighter text-slate-900 uppercase leading-none hover:opacity-90 transition">
-                                VOYAGE <span className="text-slate-200">OFFICE</span>
-                            </h1>
-                        </Link>
-                        <div className="flex items-center gap-3 mt-6">
-                            <span className="h-2 w-2 rounded-full bg-emerald-400/80"></span>
-                            <p className="text-[10px] font-mono font-semibold text-slate-300 uppercase tracking-[0.25em] truncate">
-                                System Connected: {backend}
+            {/* Action cards */}
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                {sections.map((s) => (
+                    <div
+                        key={s.title}
+                        className="flex min-h-[210px] flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+                    >
+                        <div>
+                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                                {s.eyebrow}
+                            </h3>
+                            <h2 className="mt-1 text-2xl font-bold text-slate-900">
+                                {s.title}
+                            </h2>
+                            <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                                {s.copy}
                             </p>
                         </div>
-                    </div>
-                </header>
 
-                {/* 3. SYMMETRICAL DASHBOARD CONTENT */}
-                <div className="p-10 max-w-5xl w-full space-y-8">
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Main Action Card */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
-                            <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
-                                    Content
-                                </h3>
-                                <h2 className="text-2xl font-bold text-slate-800">
-                                    Post Management
-                                </h2>
-                                <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-                                    Create, review and edit voyage publications.
-                                </p>
-                            </div>
-
-                            <div className="mt-6 flex flex-col gap-3">
-                                <Link
-                                    href="/admin/posts/new"
-                                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition"
-                                >
-                                    + New Post
-                                </Link>
-
-                                <Link
-                                    href="/admin/posts"
-                                    className="inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all"
-                                >
-                                    Manage Posts →
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* Events Card */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
-                            <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
-                                    Content
-                                </h3>
-                                <h2 className="text-2xl font-bold text-slate-800">
-                                    Event Management
-                                </h2>
-                                <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-                                    Create, schedule, and publish club events.
-                                </p>
-                            </div>
-
-                            <div className="mt-6 flex flex-col gap-3">
-                                <Link
-                                    href="/admin/events/new"
-                                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition"
-                                >
-                                    + New Event
-                                </Link>
-
-                                <Link
-                                    href="/admin/events"
-                                    className="inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all"
-                                >
-                                    Manage Events →
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* Collections Card */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
-                            <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
-                                    Content
-                                </h3>
-                                <h2 className="text-2xl font-bold text-slate-800">
-                                    Collection Management
-                                </h2>
-                                <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-                                    Create and manage product drops and collections.
-                                </p>
-                            </div>
-
-                            <div className="mt-6 flex flex-col gap-3">
-                                <Link
-                                    href="/admin/collections/new"
-                                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition"
-                                >
-                                    + New Collection
-                                </Link>
-
-                                <Link
-                                    href="/admin/collections"
-                                    className="inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all"
-                                >
-                                    Manage Collections →
-                                </Link>
-                            </div>
-                        </div>
-
-
-                        {/* Database Status Card */}
-                        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[200px]">
-                            <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">Infrastructure</h3>
-                                <h2 className="text-2xl font-bold text-slate-800">SQL Database</h2>
-                                <p className="text-slate-500 mt-2 text-sm leading-relaxed truncate">
-                                    Status: Operational at {backend}/h2-console
-                                </p>
-                            </div>
-                            <a href={`${backend}/h2-console`} target="_blank" className="mt-6 inline-flex items-center font-bold text-indigo-600 hover:gap-2 transition-all">
-                                Open Console ↗
-                            </a>
+                        <div className="mt-6 flex flex-col gap-3">
+                            <Link
+                                href={s.newHref}
+                                className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+                            >
+                                {s.newLabel}
+                            </Link>
+                            <Link
+                                href={s.manageHref}
+                                className="inline-flex items-center text-sm font-semibold text-slate-900 underline-offset-4 hover:underline"
+                            >
+                                Manage {s.title.toLowerCase()} →
+                            </Link>
                         </div>
                     </div>
+                ))}
+            </div>
 
-                    {/* Large Summary Box */}
-                    <div className="bg-indigo-600 rounded-3xl p-10 text-white shadow-xl shadow-indigo-200">
-                        <h3 className="text-indigo-200 text-xs font-black uppercase tracking-widest mb-2">Office Overview</h3>
-                        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-                            <div className="max-w-md">
-                                <p className="text-2xl font-medium leading-tight italic">
-                                    "Efficiency is doing things right; effectiveness is doing the right things."
-                                </p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-4xl font-black">100%</p>
-                                <p className="text-indigo-200 text-xs font-bold uppercase">System Uptime</p>
-                            </div>
-                        </div>
+            {/* Infrastructure strip */}
+            <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
+                <div className="flex min-h-[140px] flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <div>
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                            Infrastructure
+                        </h3>
+                        <h2 className="mt-1 text-xl font-bold text-slate-900">
+                            SQL Database
+                        </h2>
                     </div>
-
+                    <a
+                        href={`${backend}/h2-console`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-4 inline-flex items-center text-sm font-semibold text-slate-900 underline-offset-4 hover:underline"
+                    >
+                        Open console ↗
+                    </a>
                 </div>
-            </main>
+
+                <div className="rounded-2xl bg-slate-900 p-6 text-white shadow-sm md:col-span-2">
+                    <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-slate-400">
+                        Overview
+                    </h3>
+                    <p className="mt-3 max-w-md text-lg font-medium leading-snug italic">
+                        “Do it better than average. It’s me vs. me.”
+                    </p>
+                    <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">
+                        Voyage — for the few.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }

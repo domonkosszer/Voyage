@@ -35,6 +35,93 @@ html, body {
     scrollbar-width: none;     /* Firefox */
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+/* Visible keyboard focus everywhere (a11y) — quiet, on-brand */
+:focus-visible {
+    outline: 2px solid rgba(0, 0, 0, 0.55);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* Honour reduced-motion: freeze marquees / loops, keep content readable */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Article / blog body typography                                      */
+/* `prose` needs the typography plugin (not installed), so the post    */
+/* body is styled here directly to stay self-contained.                */
+/* ------------------------------------------------------------------ */
+.article-body {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: rgba(0, 0, 0, 0.82);
+}
+
+.article-body > * + * {
+    margin-top: 1.25em;
+}
+
+.article-body p {
+    margin-top: 1.1em;
+    text-wrap: pretty;
+}
+
+.article-body h1,
+.article-body h2,
+.article-body h3 {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: #000;
+}
+
+.article-body h2 { font-size: 1.6rem; }
+.article-body h3 { font-size: 1.3rem; }
+
+.article-body a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: opacity 0.2s ease;
+}
+
+.article-body a:hover { opacity: 0.6; }
+
+.article-body img {
+    border-radius: 1rem;
+    margin: 2em auto;
+}
+
+.article-body blockquote {
+    border-left: 2px solid rgba(0, 0, 0, 0.18);
+    padding-left: 1.25rem;
+    font-style: italic;
+    opacity: 0.85;
+}
+
+.article-body ul,
+.article-body ol {
+    padding-left: 1.5rem;
+}
+
+.article-body ul { list-style: disc; }
+.article-body ol { list-style: decimal; }
+.article-body li { margin-top: 0.4em; }
+
 /* nur Mobile / Touch-Geräte */
 @media (hover: none) and (pointer: coarse) {
     html, body {

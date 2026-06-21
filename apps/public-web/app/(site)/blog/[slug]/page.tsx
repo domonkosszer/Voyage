@@ -1,7 +1,7 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import { getPostBySlug } from "@/lib/posts";
-import { TopBar, BackLink } from "@/components/shell/TopBar";
+import { SiteNav } from "@/components/shell/SiteNav";
 type PageProps = {
     params: Promise<{
         slug: string;
@@ -22,10 +22,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
     return (
         <>
-            <TopBar
-                title=""
-                left={<BackLink href="/blog" />}
-            />
+            <SiteNav />
 
             {/* FIXED TITLE */}
             <div className="fixed top-0 inset-x-0 z-30 pointer-events-none">
@@ -53,7 +50,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                     {meta.date}
                 </p>
 
-                <div className="pt-[0px] sm:pt-[20px] prose prose-neutral max-w-none break-words sm:prose-base lg:prose-lg">
+                <div className="article-body pt-[0px] sm:pt-[20px] max-w-none break-words">
                     <MDXRemote source={content} />
                 </div>
             </article>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { TopBar, InfoLink } from "../../components/shell/TopBar";
 import VoyageStickLoop from "../../components/visuals/VoyageStickLoop";
 import { listEvents } from "@/lib/events/store.file";
 
@@ -7,9 +6,6 @@ export default function HomePage() {
     const events = listEvents();
     return (
         <div className="px-7">
-            {/* NAVIGATION ONLY */}
-            {/*<TopBar right={<InfoLink href="/about" />} title="" />*/}
-
             {/* BRAND / LOGO */}
             <section className="mt-10 text-center">
                 <h1
@@ -103,6 +99,11 @@ export default function HomePage() {
                         </header>
 
                         <div className="mt-[30px] grid grid-cols-1 gap-[2px] md:grid-cols-2 place-items-stretch">
+                            {events.length === 0 && (
+                                <p className="md:col-span-2 mt-[20px] text-center opacity-50 tracking-[0.15em] italic">
+                                    No upcoming events yet — check back soon.
+                                </p>
+                            )}
                             {events.map((event) => (
                                 <article
                                     key={event.id}

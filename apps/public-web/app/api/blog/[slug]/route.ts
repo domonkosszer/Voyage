@@ -22,7 +22,7 @@ async function latestPostFile(slug: string) {
 // GET /api/blog/[slug] → fetch full post (meta + content)
 export async function GET(
     _req: NextRequest,
-    ctx: RouteContext<"/api/blog/[slug]">
+    ctx: { params: Promise<{ slug: string }> }
 ) {
     const { slug } = await ctx.params;
 
@@ -37,7 +37,7 @@ export async function GET(
 // DELETE /api/blog/[slug] → delete post
 export async function DELETE(
     _req: NextRequest,
-    ctx: RouteContext<"/api/blog/[slug]">
+    ctx: { params: Promise<{ slug: string }> }
 ) {
     const { slug } = await ctx.params;
 

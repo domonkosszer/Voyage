@@ -1,0 +1,24 @@
+{
+  "slug": "drop-01",
+  "title": "DROP 01",
+  "subtitle": "The first chapter. Built for movement, made for the few.",
+  "heroImage": "/uploads/collections/drop-01/benin_-3_preview-1776249264641.jpeg",
+  "intro": "Where the journey begins.",
+  "products": [
+    {
+      "id": "d01-p1",
+      "slug": "drop-01-tee",
+      "name": "Voyage Tee — Off Black",
+      "priceCHF": 59,
+      "image1": "/uploads/collections/drop-01/benin_-3_preview-1776249264641.jpeg",
+      "image2": "",
+      "badge": "Drop 01"
+    }
+  ],
+  "editorial": {
+    "headline": "For the few.",
+    "copy": "No overthinking. No waiting. Just action. The first Voyage drop is a starting line, not a destination.",
+    "imageA": "/uploads/collections/drop-01/benin_-3_preview-1776249264641.jpeg",
+    "imageB": ""
+  }
+}
